@@ -126,13 +126,22 @@ def test_docker_sandbox_fails_closed_without_docker(repo: Path, monkeypatch):
     assert "docker" in tests.summary
 
 
+def _linux_engine(command: list[str]) -> bool:
+    probe = subprocess.run(
+        [*command, "info", "--format", "{{.OSType}}"],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    return probe.returncode == 0 and probe.stdout.strip() == "linux"
+
+
 def _docker_command() -> list[str] | None:
-    if shutil.which("docker"):
+    """A Docker CLI backed by a Linux engine (Windows-container engines can't run the image)."""
+    if shutil.which("docker") and _linux_engine(["docker"]):
         return ["docker"]
-    if sys.platform == "win32" and shutil.which("wsl"):
-        probe = subprocess.run(["wsl", "-e", "docker", "info"], capture_output=True, check=False)
-        if probe.returncode == 0:
-            return ["wsl", "docker"]
+    if sys.platform == "win32" and shutil.which("wsl") and _linux_engine(["wsl", "-e", "docker"]):
+        return ["wsl", "docker"]
     return None
 
 

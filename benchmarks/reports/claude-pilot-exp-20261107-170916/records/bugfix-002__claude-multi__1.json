@@ -1,0 +1,42 @@
+{
+  "experiment_id": "exp-20261107-170916-ab11",
+  "task_id": "bugfix-002",
+  "configuration": "claude-multi",
+  "repetition": 1,
+  "status": "completed",
+  "status_reason": null,
+  "test_passed": true,
+  "hidden_tests_passed": 5,
+  "hidden_tests_failed": 0,
+  "execution_time_seconds": 74.719,
+  "token_usage": {
+    "input": 473102,
+    "output": 4717
+  },
+  "measured_cost": null,
+  "estimated_cost": 0.746155,
+  "estimated_cost_source": "estimated:claude_cli:total_cost_usd",
+  "human_interventions": 0,
+  "regression_detected": false,
+  "regressed_tests": [],
+  "retries": 0,
+  "merge_success": true,
+  "validation_outcome": "PASS",
+  "agentbridge_task_statuses": {
+    "r830ed2-task-001": "SUCCEEDED",
+    "r830ed2-task-002": "WAITING_FOR_APPROVAL",
+    "r830ed2-task-003": "SUCCEEDED"
+  },
+  "base_commit": "37039838631e4b03d3438a4cb3e1b5bee900d360",
+  "fixture_digest": "90742808002481ee4d4e091a10690f6b427036347d9de4af67accbb130c2bd36",
+  "providers": {
+    "claude": {
+      "models": [
+        "claude-haiku-5-5"
+      ]
+    }
+  },
+  "started_at": "2026-11-07T17:09:32+00:00",
+  "finished_at": "2026-11-07T17:10:49+00:00",
+  "artifacts_dir": "E:\\agentbridge\\benchmarks\\experiments\\exp-20261107-170916-ab11\\work\\bugfix-002__claude-multi__1"
+}

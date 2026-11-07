@@ -1,0 +1,3 @@
+experiment_id,task_id,configuration,repetition,status,status_reason,test_passed,hidden_tests_passed,hidden_tests_failed,execution_time_seconds,measured_cost,estimated_cost,estimated_cost_source,human_interventions,regression_detected,retries,merge_success,validation_outcome
+exp-20261107-170916-ab11,bugfix-002,claude-multi,1,completed,,True,5,0,74.719,,0.746155,estimated:claude_cli:total_cost_usd,0,False,0,True,PASS
+exp-20261107-170916-ab11,bugfix-002,claude-single,1,completed,,True,5,0,14.859,,0.374886,estimated:claude_cli:total_cost_usd,0,False,0,True,PASS

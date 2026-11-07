@@ -201,10 +201,17 @@ agentbridge benchmark run core  -c claude-single -c claude-multi -n 3
 | `mock-noop` — changes nothing useful | 12 | **0 %** |
 | `antigravity-remote` — manual handoff | 0 (12 not executable) | n/a |
 
+First real-agent **pilot** (1 easy task, 1 repetition — not a conclusion):
+
+| Pilot: `bugfix-002` | Hidden tests | Time | Est. cost |
+|---|---:|---:|---:|
+| `claude-single` | 5/5 | 14.9 s | $0.37 |
+| `claude-multi` (analyst → developer → reviewer + review) | 5/5 | 74.7 s | $0.75 |
+
 > [!IMPORTANT]
-> These controls only prove the harness works. **No real-agent comparison has been
-> published yet** — please don't cite multi- vs single-agent conclusions from this
-> repository until it has. Method: [docs/benchmark-methodology.md](docs/benchmark-methodology.md).
+> The controls only prove the harness works, and the pilot is a single run of one easy
+> task. **No statistically meaningful comparison exists yet** — please don't cite
+> multi- vs single-agent conclusions from this repository. Method: [docs/benchmark-methodology.md](docs/benchmark-methodology.md).
 
 ## 🔐 Security at a glance
 
