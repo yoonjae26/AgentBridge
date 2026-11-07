@@ -24,7 +24,9 @@ def test_token_passed_by_name_only_and_nothing_personal_mounted(tmp_path: Path, 
     assert args[token_pos - 1] == "-e"  # passed by name; docker reads the value
     mounts = [args[i + 1] for i, a in enumerate(args) if a == "-v"]
     assert mounts == [f"{tmp_path.resolve()}:/workspace"]
-    assert ".claude" not in joined and str(Path.home()) not in joined
+    # Only the worktree is mounted; nothing else from the home directory, never ~/.claude.
+    assert not any(".claude" in m for m in mounts)
+    assert all(str(Path.home() / d) not in joined for d in (".claude", ".ssh", ".aws"))
     for flag in ("--read-only", "--rm", "no-new-privileges"):
         assert flag in args
     assert args[args.index("--cap-drop") + 1] == "ALL"
