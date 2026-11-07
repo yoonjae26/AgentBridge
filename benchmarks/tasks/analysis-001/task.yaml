@@ -1,0 +1,30 @@
+# base_commit is null for fixture tasks: the base commit is synthesised
+# deterministically from repo/ (see docs/benchmark-methodology.md).
+task_id: analysis-001
+repository: fixture
+base_commit: null
+task_category: repository_analysis
+difficulty: easy
+timeout: 900
+issue_description: |
+  Write ANALYSIS.md describing this repository: list every module in the shop package together with its public functions, identify the command-line entry point, and state which modules have no tests (one line per untested module, containing the module name and the word "untested"). Do not modify source files.
+acceptance_criteria:
+- ANALYSIS.md lists all shop modules and their public functions
+- ANALYSIS.md names the CLI entry point
+- ANALYSIS.md lists the untested modules
+expected_files:
+- ANALYSIS.md
+setup_commands: []
+test_commands:
+- - '{python}'
+  - -m
+  - pytest
+  - -q
+  - agentbench_hidden
+regression_test_command:
+- '{python}'
+- -m
+- pytest
+- -q
+- tests
+license: MIT (authored for AgentBench)

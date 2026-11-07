@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# AgentBridge state (when AgentBridge is used on this repository)
+.agentbridge/
+agentbridge.yaml
+
+# AgentBench raw experiment runs (large; publish curated reports under benchmarks/reports/)
+benchmarks/experiments/
+
+# Secrets
+.env
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

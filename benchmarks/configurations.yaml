@@ -1,0 +1,65 @@
+# AgentBench configurations.
+#
+# A configuration is only executed when every provider it uses is available and
+# can run without a human. Others are recorded as "not_executable" (never as
+# failures and never as fabricated results).
+
+configurations:
+  mock-oracle:
+    description: >-
+      Harness control. The mock provider writes the task's reference solution, so
+      every task should pass. Validates fixtures and hidden tests; says nothing
+      about AI agents.
+    kind: control
+    planner_mode: single
+    oracle: true
+    providers:
+      mock: {type: mock}
+    routing: {planner: mock, default_worker: mock}
+
+  mock-noop:
+    description: >-
+      Negative control. The mock provider writes an unrelated file, so tasks
+      should fail. Confirms the hidden tests cannot be passed without a change.
+    kind: control
+    planner_mode: single
+    providers:
+      mock: {type: mock}
+    routing: {planner: mock, default_worker: mock}
+
+  claude-single:
+    description: "Configuration A: single Claude Code agent (Task -> Claude Code -> Result)."
+    kind: single_agent
+    planner_mode: single
+    providers:
+      claude: {type: claude_code, command: claude, permission_mode: acceptEdits}
+    routing: {planner: claude, default_worker: claude}
+
+  claude-multi:
+    description: >-
+      Multi-agent workflow using Claude Code in three roles: analyst -> developer ->
+      reviewer (template plan), with an additional agent review of the developer diff.
+    kind: multi_agent
+    planner_mode: standard
+    providers:
+      claude: {type: claude_code, command: claude, permission_mode: acceptEdits}
+    routing: {planner: claude, default_worker: claude, reviewer: claude}
+
+  antigravity-remote:
+    description: "Configuration B: single Antigravity remote agent (manual handoff)."
+    kind: remote
+    planner_mode: single
+    providers:
+      antigravity: {type: antigravity_remote, command: agy}
+    routing: {planner: antigravity, default_worker: antigravity}
+
+  claude-antigravity:
+    description: >-
+      Configuration C: Claude planner -> Antigravity remote worker -> independent
+      reviewer. Requires a manual remote handoff.
+    kind: remote
+    planner_mode: provider
+    providers:
+      claude: {type: claude_code, command: claude, permission_mode: acceptEdits}
+      antigravity: {type: antigravity_remote, command: agy}
+    routing: {planner: claude, default_worker: antigravity, reviewer: claude}

@@ -1,0 +1,25 @@
+# base_commit is null for fixture tasks: the base commit is synthesised
+# deterministically from repo/ (see docs/benchmark-methodology.md).
+task_id: review-001
+repository: fixture
+base_commit: null
+task_category: code_review
+difficulty: medium
+timeout: 900
+issue_description: |
+  Review accounts.py for security defects. Write your findings to REVIEW.md: for each defect give the function name, the problem and a recommended fix. Do not modify accounts.py or any other source file.
+acceptance_criteria:
+- REVIEW.md identifies the SQL injection in find_user
+- REVIEW.md identifies the unsafe password comparison in check_password
+- Source files are unchanged
+expected_files:
+- REVIEW.md
+setup_commands: []
+test_commands:
+- - '{python}'
+  - -m
+  - pytest
+  - -q
+  - agentbench_hidden
+regression_test_command: null
+license: MIT (authored for AgentBench)

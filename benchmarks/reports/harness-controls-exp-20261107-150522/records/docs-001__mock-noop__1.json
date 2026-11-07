@@ -1,0 +1,35 @@
+{
+  "experiment_id": "exp-20261107-150522-30d0",
+  "task_id": "docs-001",
+  "configuration": "mock-noop",
+  "repetition": 1,
+  "status": "completed",
+  "status_reason": null,
+  "test_passed": false,
+  "hidden_tests_passed": 2,
+  "hidden_tests_failed": 4,
+  "execution_time_seconds": 0.984,
+  "token_usage": null,
+  "measured_cost": null,
+  "estimated_cost": null,
+  "estimated_cost_source": null,
+  "human_interventions": 0,
+  "regression_detected": false,
+  "regressed_tests": [],
+  "retries": 0,
+  "merge_success": true,
+  "validation_outcome": "PASS",
+  "agentbridge_task_statuses": {
+    "r8b3708-task-001": "WAITING_FOR_APPROVAL"
+  },
+  "base_commit": "daf93e3f18645cc5e3f0c8d86ece411604f64d62",
+  "fixture_digest": "9ed9b49c8a01ec02e0ebf981c333c423cc8989245f3dcf2aaf48111aba33955a",
+  "providers": {
+    "mock": {
+      "models": []
+    }
+  },
+  "started_at": "2026-11-07T15:05:59+00:00",
+  "finished_at": "2026-11-07T15:06:02+00:00",
+  "artifacts_dir": "E:\\agentbridge\\benchmarks\\experiments\\exp-20261107-150522-30d0\\work\\docs-001__mock-noop__1"
+}

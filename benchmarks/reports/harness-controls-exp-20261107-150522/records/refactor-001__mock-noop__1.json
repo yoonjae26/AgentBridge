@@ -1,0 +1,35 @@
+{
+  "experiment_id": "exp-20261107-150522-30d0",
+  "task_id": "refactor-001",
+  "configuration": "mock-noop",
+  "repetition": 1,
+  "status": "completed",
+  "status_reason": null,
+  "test_passed": false,
+  "hidden_tests_passed": 2,
+  "hidden_tests_failed": 1,
+  "execution_time_seconds": 1.016,
+  "token_usage": null,
+  "measured_cost": null,
+  "estimated_cost": null,
+  "estimated_cost_source": null,
+  "human_interventions": 0,
+  "regression_detected": false,
+  "regressed_tests": [],
+  "retries": 0,
+  "merge_success": true,
+  "validation_outcome": "PASS",
+  "agentbridge_task_statuses": {
+    "r631070-task-001": "WAITING_FOR_APPROVAL"
+  },
+  "base_commit": "aab45158046f4e9c42891c8643f8e70d362382c3",
+  "fixture_digest": "e6f3a39a7b702e39a879fe11bacf6a8d417c172d3da209d1af7b8e005ce8b883",
+  "providers": {
+    "mock": {
+      "models": []
+    }
+  },
+  "started_at": "2026-11-07T15:06:08+00:00",
+  "finished_at": "2026-11-07T15:06:10+00:00",
+  "artifacts_dir": "E:\\agentbridge\\benchmarks\\experiments\\exp-20261107-150522-30d0\\work\\refactor-001__mock-noop__1"
+}

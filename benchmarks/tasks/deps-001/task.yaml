@@ -1,0 +1,26 @@
+# base_commit is null for fixture tasks: the base commit is synthesised
+# deterministically from repo/ (see docs/benchmark-methodology.md).
+task_id: deps-001
+repository: fixture
+base_commit: null
+task_category: dependency_updates
+difficulty: easy
+timeout: 900
+issue_description: |
+  requirements.txt pins requests==2.19.0, which has known security issues (for example CVE-2018-18074). Update the requests requirement so that the minimum allowed version is at least 2.32.3. Leave all other requirements exactly as they are. Add a bullet mentioning the requests upgrade under "## Unreleased" in CHANGELOG.md. No network access is needed or expected.
+acceptance_criteria:
+- requests minimum version is >= 2.32.3
+- Other pins are unchanged
+- CHANGELOG.md mentions the upgrade under Unreleased
+expected_files:
+- requirements.txt
+- CHANGELOG.md
+setup_commands: []
+test_commands:
+- - '{python}'
+  - -m
+  - pytest
+  - -q
+  - agentbench_hidden
+regression_test_command: null
+license: MIT (authored for AgentBench)

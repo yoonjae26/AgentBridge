@@ -1,0 +1,4 @@
+configuration,runs_executed,runs_not_executable,task_success_rate,test_pass_rate,mean_execution_time_seconds,median_execution_time_seconds,total_measured_cost_usd,total_estimated_cost_usd,total_input_tokens,total_output_tokens,regression_rate,retry_rate,failure_rate,human_interventions,merge_success_rate
+antigravity-remote,0,12,,,,,,,,,,,,,
+mock-noop,12,0,0.0,0.2712,0.992,0.985,,,,,0.0,0.0,0.0,0,1.0
+mock-oracle,12,0,1.0,1.0,0.999,1.0,,,,,0.0,0.0,0.0,0,1.0

@@ -1,0 +1,31 @@
+# base_commit is null for fixture tasks: the base commit is synthesised
+# deterministically from repo/ (see docs/benchmark-methodology.md).
+task_id: bugfix-003
+repository: fixture
+base_commit: null
+task_category: bug_fixing
+difficulty: medium
+timeout: 900
+issue_description: |
+  pagination.paginate() is documented as 1-indexed but paginate(items, 1) returns the second page. page_count(25, 10) returns 2 but there are 3 pages. Fix both, and make paginate() raise ValueError for page numbers below 1.
+acceptance_criteria:
+- paginate(items, 1) returns the first page
+- page_count rounds up partial pages
+- paginate raises ValueError for page < 1
+- Existing tests keep passing
+expected_files:
+- pagination.py
+setup_commands: []
+test_commands:
+- - '{python}'
+  - -m
+  - pytest
+  - -q
+  - agentbench_hidden
+regression_test_command:
+- '{python}'
+- -m
+- pytest
+- -q
+- tests
+license: MIT (authored for AgentBench)

@@ -1,0 +1,19 @@
+# Named task suites. "all" (every task) is always available.
+suites:
+  core:
+    - analysis-001
+    - bugfix-001
+    - bugfix-002
+    - bugfix-003
+    - deps-001
+    - docs-001
+    - feature-001
+    - feature-002
+    - feature-003
+    - refactor-001
+    - review-001
+    - tests-001
+  smoke:
+    - bugfix-001
+    - feature-001
+    - tests-001

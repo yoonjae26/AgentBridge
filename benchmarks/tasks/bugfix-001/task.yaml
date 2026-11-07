@@ -1,0 +1,30 @@
+# base_commit is null for fixture tasks: the base commit is synthesised
+# deterministically from repo/ (see docs/benchmark-methodology.md).
+task_id: bugfix-001
+repository: fixture
+base_commit: null
+task_category: bug_fixing
+difficulty: easy
+timeout: 900
+issue_description: |
+  textutils.slugify() produces malformed slugs. slugify("Hello, World!") returns "hello---world-" but should return "hello-world". Runs of non-alphanumeric characters must collapse into a single dash, and the slug must not start or end with a dash.
+acceptance_criteria:
+- slugify collapses runs of separators into one dash
+- slugify strips leading and trailing dashes
+- Existing tests keep passing
+expected_files:
+- textutils.py
+setup_commands: []
+test_commands:
+- - '{python}'
+  - -m
+  - pytest
+  - -q
+  - agentbench_hidden
+regression_test_command:
+- '{python}'
+- -m
+- pytest
+- -q
+- tests
+license: MIT (authored for AgentBench)

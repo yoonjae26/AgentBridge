@@ -1,0 +1,35 @@
+{
+  "experiment_id": "exp-20261107-150522-30d0",
+  "task_id": "bugfix-002",
+  "configuration": "mock-oracle",
+  "repetition": 1,
+  "status": "completed",
+  "status_reason": null,
+  "test_passed": true,
+  "hidden_tests_passed": 5,
+  "hidden_tests_failed": 0,
+  "execution_time_seconds": 1.0,
+  "token_usage": null,
+  "measured_cost": null,
+  "estimated_cost": null,
+  "estimated_cost_source": null,
+  "human_interventions": 0,
+  "regression_detected": false,
+  "regressed_tests": [],
+  "retries": 0,
+  "merge_success": true,
+  "validation_outcome": "PASS",
+  "agentbridge_task_statuses": {
+    "r5f7905-task-001": "WAITING_FOR_APPROVAL"
+  },
+  "base_commit": "37039838631e4b03d3438a4cb3e1b5bee900d360",
+  "fixture_digest": "90742808002481ee4d4e091a10690f6b427036347d9de4af67accbb130c2bd36",
+  "providers": {
+    "mock": {
+      "models": []
+    }
+  },
+  "started_at": "2026-11-07T15:05:26+00:00",
+  "finished_at": "2026-11-07T15:05:29+00:00",
+  "artifacts_dir": "E:\\agentbridge\\benchmarks\\experiments\\exp-20261107-150522-30d0\\work\\bugfix-002__mock-oracle__1"
+}

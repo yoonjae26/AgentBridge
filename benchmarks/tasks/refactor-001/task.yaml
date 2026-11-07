@@ -1,0 +1,32 @@
+# base_commit is null for fixture tasks: the base commit is synthesised
+# deterministically from repo/ (see docs/benchmark-methodology.md).
+task_id: refactor-001
+repository: fixture
+base_commit: null
+task_category: refactoring
+difficulty: medium
+timeout: 900
+issue_description: |
+  geometry.legacy_area() is deprecated. Remove it and change report.py to use geometry.area() instead. Behaviour must not change: report.describe() must produce exactly the same output, and unknown shapes must still raise ValueError.
+acceptance_criteria:
+- legacy_area no longer exists
+- report.py uses area()
+- describe() output is unchanged
+- Existing tests keep passing
+expected_files:
+- geometry.py
+- report.py
+setup_commands: []
+test_commands:
+- - '{python}'
+  - -m
+  - pytest
+  - -q
+  - agentbench_hidden
+regression_test_command:
+- '{python}'
+- -m
+- pytest
+- -q
+- tests
+license: MIT (authored for AgentBench)

@@ -1,0 +1,35 @@
+{
+  "experiment_id": "exp-20261107-150522-30d0",
+  "task_id": "feature-001",
+  "configuration": "mock-oracle",
+  "repetition": 1,
+  "status": "completed",
+  "status_reason": null,
+  "test_passed": true,
+  "hidden_tests_passed": 16,
+  "hidden_tests_failed": 0,
+  "execution_time_seconds": 1.016,
+  "token_usage": null,
+  "measured_cost": null,
+  "estimated_cost": null,
+  "estimated_cost_source": null,
+  "human_interventions": 0,
+  "regression_detected": false,
+  "regressed_tests": [],
+  "retries": 0,
+  "merge_success": true,
+  "validation_outcome": "PASS",
+  "agentbridge_task_statuses": {
+    "r3555d1-task-001": "WAITING_FOR_APPROVAL"
+  },
+  "base_commit": "d1e2a1c09eaafb7fd5f79660ade7628018f9d4a7",
+  "fixture_digest": "72960974cb4ff33b065f0e704ca5080b231cd37ff371fecf41e69079864c5682",
+  "providers": {
+    "mock": {
+      "models": []
+    }
+  },
+  "started_at": "2026-11-07T15:05:35+00:00",
+  "finished_at": "2026-11-07T15:05:37+00:00",
+  "artifacts_dir": "E:\\agentbridge\\benchmarks\\experiments\\exp-20261107-150522-30d0\\work\\feature-001__mock-oracle__1"
+}

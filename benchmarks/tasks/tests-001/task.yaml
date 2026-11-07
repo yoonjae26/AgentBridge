@@ -1,0 +1,25 @@
+# base_commit is null for fixture tasks: the base commit is synthesised
+# deterministically from repo/ (see docs/benchmark-methodology.md).
+task_id: tests-001
+repository: fixture
+base_commit: null
+task_category: unit_test_generation
+difficulty: medium
+timeout: 900
+issue_description: |
+  calculator.py has no tests. Write tests/test_calculator.py with at least five pytest test functions covering add, subtract, multiply and divide, including the ValueError raised by divide(x, 0). Do not modify calculator.py. The tests must pass on the current code and must detect bugs (they are checked against mutated copies of calculator.py).
+acceptance_criteria:
+- tests/test_calculator.py exists with at least five tests
+- The tests pass on the current implementation
+- The tests fail on mutated implementations
+expected_files:
+- tests/test_calculator.py
+setup_commands: []
+test_commands:
+- - '{python}'
+  - -m
+  - pytest
+  - -q
+  - agentbench_hidden
+regression_test_command: null
+license: MIT (authored for AgentBench)

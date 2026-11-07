@@ -1,0 +1,32 @@
+# base_commit is null for fixture tasks: the base commit is synthesised
+# deterministically from repo/ (see docs/benchmark-methodology.md).
+task_id: feature-001
+repository: fixture
+base_commit: null
+task_category: feature_implementation
+difficulty: medium
+timeout: 900
+issue_description: |
+  Add a function is_valid_email(address: str) -> bool to validators.py. Rules: exactly one "@"; a non-empty local part made of letters, digits and . _ % + -; a domain of at least two dot-separated labels; each label is non-empty, uses only letters, digits and hyphens, and does not start or end with a hyphen; the last label (TLD) is at least two letters. No whitespace anywhere. Add unit tests for it.
+acceptance_criteria:
+- is_valid_email accepts valid addresses
+- is_valid_email rejects invalid addresses
+- Unit tests for is_valid_email exist
+- Existing tests keep passing
+expected_files:
+- validators.py
+- tests
+setup_commands: []
+test_commands:
+- - '{python}'
+  - -m
+  - pytest
+  - -q
+  - agentbench_hidden
+regression_test_command:
+- '{python}'
+- -m
+- pytest
+- -q
+- tests
+license: MIT (authored for AgentBench)

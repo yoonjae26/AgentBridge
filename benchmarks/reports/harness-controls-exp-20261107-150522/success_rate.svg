@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="158" viewBox="0 0 640 158" font-family="sans-serif" font-size="13">
+<rect width="640" height="158" fill="#ffffff"/>
+<text x="12" y="24" font-size="15" font-weight="bold" fill="#222">Task success rate</text>
+<text x="12" y="58" fill="#333">antigravity-remote</text>
+<text x="170" y="58" fill="#888">not available</text>
+<text x="12" y="94" fill="#333">mock-noop</text>
+<rect x="170" y="76" width="1.0" height="26" fill="#3b6fb6"/>
+<text x="177.0" y="94" fill="#222">0%</text>
+<text x="12" y="130" fill="#333">mock-oracle</text>
+<rect x="170" y="112" width="380.0" height="26" fill="#3b6fb6"/>
+<text x="556.0" y="130" fill="#222">100%</text>
+</svg>

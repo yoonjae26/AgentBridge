@@ -1,0 +1,37 @@
+experiment_id,task_id,configuration,repetition,status,status_reason,test_passed,hidden_tests_passed,hidden_tests_failed,execution_time_seconds,measured_cost,estimated_cost,estimated_cost_source,human_interventions,regression_detected,retries,merge_success,validation_outcome
+exp-20261107-150522-30d0,analysis-001,antigravity-remote,1,not_executable,provider 'antigravity' requires a manual remote handoff,,,,,,,,,,,,
+exp-20261107-150522-30d0,analysis-001,mock-noop,1,completed,,False,0,4,0.985,,,,0,False,0,True,PASS
+exp-20261107-150522-30d0,analysis-001,mock-oracle,1,completed,,True,4,0,1.031,,,,0,False,0,True,PASS
+exp-20261107-150522-30d0,bugfix-001,antigravity-remote,1,not_executable,provider 'antigravity' requires a manual remote handoff,,,,,,,,,,,,
+exp-20261107-150522-30d0,bugfix-001,mock-noop,1,completed,,False,2,2,0.984,,,,0,False,0,True,PASS
+exp-20261107-150522-30d0,bugfix-001,mock-oracle,1,completed,,True,4,0,1.0,,,,0,False,0,True,PASS
+exp-20261107-150522-30d0,bugfix-002,antigravity-remote,1,not_executable,provider 'antigravity' requires a manual remote handoff,,,,,,,,,,,,
+exp-20261107-150522-30d0,bugfix-002,mock-noop,1,completed,,False,2,3,1.0,,,,0,False,0,True,PASS
+exp-20261107-150522-30d0,bugfix-002,mock-oracle,1,completed,,True,5,0,1.0,,,,0,False,0,True,PASS
+exp-20261107-150522-30d0,bugfix-003,antigravity-remote,1,not_executable,provider 'antigravity' requires a manual remote handoff,,,,,,,,,,,,
+exp-20261107-150522-30d0,bugfix-003,mock-noop,1,completed,,False,1,4,1.015,,,,0,False,0,True,PASS
+exp-20261107-150522-30d0,bugfix-003,mock-oracle,1,completed,,True,5,0,1.0,,,,0,False,0,True,PASS
+exp-20261107-150522-30d0,deps-001,antigravity-remote,1,not_executable,provider 'antigravity' requires a manual remote handoff,,,,,,,,,,,,
+exp-20261107-150522-30d0,deps-001,mock-noop,1,completed,,False,1,2,0.984,,,,0,,0,True,WARNING
+exp-20261107-150522-30d0,deps-001,mock-oracle,1,completed,,True,3,0,1.0,,,,0,,0,True,WARNING
+exp-20261107-150522-30d0,docs-001,antigravity-remote,1,not_executable,provider 'antigravity' requires a manual remote handoff,,,,,,,,,,,,
+exp-20261107-150522-30d0,docs-001,mock-noop,1,completed,,False,2,4,0.984,,,,0,False,0,True,PASS
+exp-20261107-150522-30d0,docs-001,mock-oracle,1,completed,,True,6,0,1.0,,,,0,False,0,True,PASS
+exp-20261107-150522-30d0,feature-001,antigravity-remote,1,not_executable,provider 'antigravity' requires a manual remote handoff,,,,,,,,,,,,
+exp-20261107-150522-30d0,feature-001,mock-noop,1,completed,,False,0,1,1.0,,,,0,False,0,True,PASS
+exp-20261107-150522-30d0,feature-001,mock-oracle,1,completed,,True,16,0,1.016,,,,0,False,0,True,PASS
+exp-20261107-150522-30d0,feature-002,antigravity-remote,1,not_executable,provider 'antigravity' requires a manual remote handoff,,,,,,,,,,,,
+exp-20261107-150522-30d0,feature-002,mock-noop,1,completed,,False,0,5,0.985,,,,0,,0,True,WARNING
+exp-20261107-150522-30d0,feature-002,mock-oracle,1,completed,,True,5,0,0.984,,,,0,,0,True,WARNING
+exp-20261107-150522-30d0,feature-003,antigravity-remote,1,not_executable,provider 'antigravity' requires a manual remote handoff,,,,,,,,,,,,
+exp-20261107-150522-30d0,feature-003,mock-noop,1,completed,,False,0,13,0.984,,,,0,False,0,True,PASS
+exp-20261107-150522-30d0,feature-003,mock-oracle,1,completed,,True,13,0,0.984,,,,0,False,0,True,PASS
+exp-20261107-150522-30d0,refactor-001,antigravity-remote,1,not_executable,provider 'antigravity' requires a manual remote handoff,,,,,,,,,,,,
+exp-20261107-150522-30d0,refactor-001,mock-noop,1,completed,,False,2,1,1.016,,,,0,False,0,True,PASS
+exp-20261107-150522-30d0,refactor-001,mock-oracle,1,completed,,True,3,0,1.0,,,,0,False,0,True,PASS
+exp-20261107-150522-30d0,review-001,antigravity-remote,1,not_executable,provider 'antigravity' requires a manual remote handoff,,,,,,,,,,,,
+exp-20261107-150522-30d0,review-001,mock-noop,1,completed,,False,1,2,0.969,,,,0,,0,True,WARNING
+exp-20261107-150522-30d0,review-001,mock-oracle,1,completed,,True,3,0,0.969,,,,0,,0,True,WARNING
+exp-20261107-150522-30d0,tests-001,antigravity-remote,1,not_executable,provider 'antigravity' requires a manual remote handoff,,,,,,,,,,,,
+exp-20261107-150522-30d0,tests-001,mock-noop,1,completed,,False,5,2,1.0,,,,0,,0,True,WARNING
+exp-20261107-150522-30d0,tests-001,mock-oracle,1,completed,,True,7,0,1.0,,,,0,,0,True,PASS

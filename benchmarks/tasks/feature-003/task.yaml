@@ -1,0 +1,31 @@
+# base_commit is null for fixture tasks: the base commit is synthesised
+# deterministically from repo/ (see docs/benchmark-methodology.md).
+task_id: feature-003
+repository: fixture
+base_commit: null
+task_category: feature_implementation
+difficulty: medium
+timeout: 900
+issue_description: |
+  Implement parse_duration(text) in durations.py. It converts strings such as "1h30m", "45s", "2h5s" or "10m" into a number of seconds (int). Units h, m and s may each appear at most once and only in that order. Raise ValueError for anything else, including "", "abc", "1x", "30m1h", "-5m" and "1h 30m". format_duration() already exists and must keep working.
+acceptance_criteria:
+- parse_duration handles valid h/m/s combinations
+- parse_duration raises ValueError for invalid input
+- Existing tests keep passing
+expected_files:
+- durations.py
+- tests
+setup_commands: []
+test_commands:
+- - '{python}'
+  - -m
+  - pytest
+  - -q
+  - agentbench_hidden
+regression_test_command:
+- '{python}'
+- -m
+- pytest
+- -q
+- tests
+license: MIT (authored for AgentBench)

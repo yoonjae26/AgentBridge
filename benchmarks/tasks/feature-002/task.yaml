@@ -1,0 +1,27 @@
+# base_commit is null for fixture tasks: the base commit is synthesised
+# deterministically from repo/ (see docs/benchmark-methodology.md).
+task_id: feature-002
+repository: fixture
+base_commit: null
+task_category: feature_implementation
+difficulty: medium
+timeout: 900
+issue_description: |
+  Implement the LRUCache class in cache.py (currently a stub raising NotImplementedError). LRUCache(capacity) requires capacity >= 1 (else ValueError). get(key, default=None) returns the value and marks the key as most recently used. put(key, value) inserts or updates a key and marks it most recently used; when the cache exceeds its capacity the least recently used key is evicted. len(cache) returns the number of stored keys.
+acceptance_criteria:
+- LRUCache stores and returns values
+- Least recently used keys are evicted
+- get() refreshes recency
+- Invalid capacity raises ValueError
+expected_files:
+- cache.py
+- tests
+setup_commands: []
+test_commands:
+- - '{python}'
+  - -m
+  - pytest
+  - -q
+  - agentbench_hidden
+regression_test_command: null
+license: MIT (authored for AgentBench)

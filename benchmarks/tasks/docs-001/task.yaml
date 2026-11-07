@@ -1,0 +1,31 @@
+# base_commit is null for fixture tasks: the base commit is synthesised
+# deterministically from repo/ (see docs/benchmark-methodology.md).
+task_id: docs-001
+repository: fixture
+base_commit: null
+task_category: documentation_generation
+difficulty: easy
+timeout: 900
+issue_description: |
+  mathlib.py has no documentation. Add a docstring (at least one full sentence) to every public function in mathlib.py describing its parameters and return value, and add a "## Usage" section to README.md containing a ```python code example that imports mathlib. Do not change any behaviour.
+acceptance_criteria:
+- Every public function in mathlib.py has a docstring
+- README.md has a Usage section with a Python example
+- Behaviour is unchanged
+expected_files:
+- mathlib.py
+- README.md
+setup_commands: []
+test_commands:
+- - '{python}'
+  - -m
+  - pytest
+  - -q
+  - agentbench_hidden
+regression_test_command:
+- '{python}'
+- -m
+- pytest
+- -q
+- tests
+license: MIT (authored for AgentBench)

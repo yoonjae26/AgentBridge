@@ -1,0 +1,30 @@
+# base_commit is null for fixture tasks: the base commit is synthesised
+# deterministically from repo/ (see docs/benchmark-methodology.md).
+task_id: bugfix-002
+repository: fixture
+base_commit: null
+task_category: bug_fixing
+difficulty: easy
+timeout: 900
+issue_description: |
+  stats.median() returns the wrong value for sequences with an even number of elements: median([1, 2, 3, 4]) returns 3 instead of 2.5. It should return the mean of the two middle values. median([]) currently raises IndexError; it must raise ValueError instead.
+acceptance_criteria:
+- median returns the mean of the two middle values for even-length input
+- median([]) raises ValueError
+- Existing tests keep passing
+expected_files:
+- stats.py
+setup_commands: []
+test_commands:
+- - '{python}'
+  - -m
+  - pytest
+  - -q
+  - agentbench_hidden
+regression_test_command:
+- '{python}'
+- -m
+- pytest
+- -q
+- tests
+license: MIT (authored for AgentBench)

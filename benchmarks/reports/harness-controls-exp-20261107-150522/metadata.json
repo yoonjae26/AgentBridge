@@ -1,0 +1,123 @@
+{
+  "experiment_id": "exp-20261107-150522-30d0",
+  "suite": "core",
+  "tasks": [
+    "analysis-001",
+    "bugfix-001",
+    "bugfix-002",
+    "bugfix-003",
+    "deps-001",
+    "docs-001",
+    "feature-001",
+    "feature-002",
+    "feature-003",
+    "refactor-001",
+    "review-001",
+    "tests-001"
+  ],
+  "configurations": {
+    "mock-oracle": {
+      "name": "mock-oracle",
+      "description": "Harness control. The mock provider writes the task's reference solution, so every task should pass. Validates fixtures and hidden tests; says nothing about AI agents.",
+      "kind": "control",
+      "planner_mode": "single",
+      "providers": {
+        "mock": {
+          "enabled": true,
+          "type": "mock",
+          "execution_mode": null,
+          "command": null,
+          "model": null,
+          "timeout_seconds": null,
+          "permission_mode": null,
+          "allowed_tools": [],
+          "extra_args": [],
+          "git_remote": "origin",
+          "args": [],
+          "capabilities": [],
+          "scenario": "success",
+          "delay_seconds": 0.0,
+          "files": {}
+        }
+      },
+      "routing": {
+        "planner": "mock",
+        "default_worker": "mock",
+        "reviewer": null,
+        "roles": {}
+      },
+      "oracle": true
+    },
+    "mock-noop": {
+      "name": "mock-noop",
+      "description": "Negative control. The mock provider writes an unrelated file, so tasks should fail. Confirms the hidden tests cannot be passed without a change.",
+      "kind": "control",
+      "planner_mode": "single",
+      "providers": {
+        "mock": {
+          "enabled": true,
+          "type": "mock",
+          "execution_mode": null,
+          "command": null,
+          "model": null,
+          "timeout_seconds": null,
+          "permission_mode": null,
+          "allowed_tools": [],
+          "extra_args": [],
+          "git_remote": "origin",
+          "args": [],
+          "capabilities": [],
+          "scenario": "success",
+          "delay_seconds": 0.0,
+          "files": {}
+        }
+      },
+      "routing": {
+        "planner": "mock",
+        "default_worker": "mock",
+        "reviewer": null,
+        "roles": {}
+      },
+      "oracle": false
+    },
+    "antigravity-remote": {
+      "name": "antigravity-remote",
+      "description": "Configuration B: single Antigravity remote agent (manual handoff).",
+      "kind": "remote",
+      "planner_mode": "single",
+      "providers": {
+        "antigravity": {
+          "enabled": true,
+          "type": "antigravity_remote",
+          "execution_mode": null,
+          "command": "agy",
+          "model": null,
+          "timeout_seconds": null,
+          "permission_mode": null,
+          "allowed_tools": [],
+          "extra_args": [],
+          "git_remote": "origin",
+          "args": [],
+          "capabilities": [],
+          "scenario": "success",
+          "delay_seconds": 0.0,
+          "files": {}
+        }
+      },
+      "routing": {
+        "planner": "antigravity",
+        "default_worker": "antigravity",
+        "reviewer": null,
+        "roles": {}
+      },
+      "oracle": false
+    }
+  },
+  "repetitions": 1,
+  "started_at": "2026-11-07T15:05:22+00:00",
+  "agentbridge_version": "0.1.0",
+  "python": "3.12.7",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "git": "git version 2.53.0.windows.2",
+  "finished_at": "2026-11-07T15:06:15+00:00"
+}
