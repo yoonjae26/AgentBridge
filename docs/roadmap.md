@@ -15,8 +15,8 @@ Not done in v0.1.0 (carried forward):
 
 - Real-agent benchmark results (requires a budgeted run of `claude-single` and
   `claude-multi`, with repetitions).
-- Alembic migrations (schema is versioned but created from metadata).
-- Docker isolation for agent processes.
+- Docker isolation for agent processes (validation commands can already run in a
+  Docker sandbox).
 - Publishing to PyPI and a demo video.
 
 ## v0.2.0
@@ -27,7 +27,6 @@ Not done in v0.1.0 (carried forward):
 - Additional adapters (Codex, OpenCode) once their non-interactive interfaces are
   verified.
 - Expanded benchmark tasks from public repositories with clear licenses.
-- Alembic migrations.
 
 ## v0.3.0
 

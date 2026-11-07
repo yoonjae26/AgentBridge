@@ -63,6 +63,7 @@ class ValidationEngine:
         self.settings = settings
         self.policy = policy
         self.cache_dir = cache_dir
+        self._sandbox = settings.docker if settings.sandbox == "docker" else None
 
     async def validate(
         self,
@@ -106,6 +107,7 @@ class ValidationEngine:
                     timeout,
                     blocking=self.settings.lint_blocking,
                     cache_dir=self.cache_dir,
+                    sandbox=self._sandbox,
                 )
             )
         if self.settings.run_type_check:
@@ -118,6 +120,7 @@ class ValidationEngine:
                     timeout,
                     blocking=self.settings.type_check_blocking,
                     cache_dir=self.cache_dir,
+                    sandbox=self._sandbox,
                 )
             )
         if self.settings.run_tests:
@@ -129,6 +132,7 @@ class ValidationEngine:
                     self.policy,
                     timeout,
                     cache_dir=self.cache_dir,
+                    sandbox=self._sandbox,
                 )
             )
         steps.append(_review_step(review_diff(diff)))

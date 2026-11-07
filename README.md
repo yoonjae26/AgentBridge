@@ -99,7 +99,9 @@ the task worktree, sends the prompt on stdin and records tokens and the CLI's
 | AgentBench: 12 tasks, 8 categories, JSON / CSV / Markdown / SVG reports | ✅ |
 | Google Antigravity remote agents | ⚠️ manual handoff only — no automated execution |
 | Generic CLI adapter for other agents | ⚠️ capabilities are user-declared |
-| Docker isolation, dedicated Codex/OpenCode adapters, Alembic migrations | ❌ planned |
+| Alembic schema migrations (legacy databases upgraded in place) | ✅ |
+| Docker sandbox for validation commands (no network, resource limits) | ⚠️ validation only — agents are not containerised |
+| Dedicated Codex/OpenCode adapters, containerised agents | ❌ planned |
 
 ## ⚙️ How it works
 
@@ -214,7 +216,8 @@ agentbridge benchmark run core  -c claude-single -c claude-multi -n 3
 
 > [!WARNING]
 > A git worktree isolates **changes**, not **processes**: agents run with your user's
-> permissions. Use a container or VM for untrusted repositories. Details in
+> permissions. `validation.sandbox: docker` containerises the checks AgentBridge runs
+> on agent-written code, but not the agent itself — use a VM for untrusted repositories. Details in
 > [docs/security.md](docs/security.md).
 
 ## 📚 Documentation

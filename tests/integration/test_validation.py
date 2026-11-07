@@ -1,5 +1,8 @@
 import asyncio
+import shutil
 from pathlib import Path
+
+import pytest
 
 from agentbridge.config.settings import PolicyProfile, ValidationSettings
 from agentbridge.security.policies import build_policy
@@ -91,3 +94,54 @@ def test_parse_pytest_counts():
         "errors": 2,
     }
     assert parse_pytest_counts("nothing") == {}
+
+
+# ------------------------------------------------------------ docker sandbox
+def test_docker_wrapper_is_locked_down(tmp_path: Path):
+    from agentbridge.config.settings import DockerSandboxSettings
+    from agentbridge.execution.sandbox import expand_for_container, wrap_command
+
+    inner = expand_for_container(["{python}", "-m", "pytest", "-q"])
+    args = wrap_command(inner, tmp_path, DockerSandboxSettings(), {"PYTEST_ADDOPTS": "-x"})
+    assert args[:3] == ["docker", "run", "--rm"]
+    assert args[args.index("--network") + 1] == "none"
+    assert "--cap-drop" in args and "no-new-privileges" in args
+    assert f"{tmp_path.resolve()}:/workspace" in args
+    assert "PYTEST_ADDOPTS=-x" in args
+    assert args[-4:] == ["python", "-m", "pytest", "-q"]
+
+
+def test_docker_sandbox_fails_closed_without_docker(repo: Path, monkeypatch):
+    import agentbridge.validation.runners as runners
+
+    monkeypatch.setattr(runners, "docker_available", lambda: False)
+    ws = setup_workspace(repo, {"a.txt": "x\n"})
+    report = asyncio.run(
+        engine(run_lint=False, sandbox="docker").validate(ws.path, ws.base_commit or "")
+    )
+    tests = report.step("tests")
+    assert tests is not None and tests.outcome is Outcome.FAIL
+    assert "docker" in tests.summary
+
+
+@pytest.mark.skipif(shutil.which("docker") is None, reason="docker not installed")
+def test_docker_sandbox_runs_tests_without_network(repo: Path):
+    ws = setup_workspace(
+        repo,
+        {
+            "test_box.py": (
+                "import socket, unittest\n\n\nclass T(unittest.TestCase):\n"
+                "    def test_no_network(self):\n"
+                "        with self.assertRaises(OSError):\n"
+                "            socket.create_connection(('1.1.1.1', 53), timeout=3)\n"
+            )
+        },
+    )
+    eng = engine(
+        run_lint=False,
+        sandbox="docker",
+        test_command=["{python}", "-m", "unittest", "discover", "-v"],
+    )
+    report = asyncio.run(eng.validate(ws.path, ws.base_commit or ""))
+    tests = report.step("tests")
+    assert tests is not None and tests.exit_code == 0, tests.output_tail

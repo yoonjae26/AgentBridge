@@ -6,8 +6,10 @@ import re
 import sys
 from pathlib import Path
 
+from agentbridge.config.settings import DockerSandboxSettings
 from agentbridge.errors import PolicyViolationError
 from agentbridge.execution.process import run_process
+from agentbridge.execution.sandbox import docker_available, expand_for_container, wrap_command
 from agentbridge.security.permissions import check_command
 from agentbridge.security.policies import Policy
 from agentbridge.security.secrets import safe_environment
@@ -54,8 +56,9 @@ async def run_command_step(
     *,
     blocking: bool = True,
     cache_dir: Path | None = None,
+    sandbox: DockerSandboxSettings | None = None,
 ) -> StepResult:
-    args = expand(command)
+    args = expand_for_container(command) if sandbox else expand(command)
     try:
         check_command(args, policy)
     except PolicyViolationError as exc:
@@ -65,9 +68,19 @@ async def run_command_step(
             command=args,
             summary=f"Blocked by policy: {exc.message}",
         )
-    result = await run_process(
-        args, cwd=workdir, timeout=timeout, env=validation_environment(cache_dir)
-    )
+    env = validation_environment(None if sandbox else cache_dir)
+    run_args = args
+    if sandbox is not None:
+        if not docker_available():
+            # Fail closed: never fall back to running agent-written code on the host.
+            return StepResult(
+                name=name,
+                outcome=Outcome.FAIL,
+                command=args,
+                summary="validation.sandbox is 'docker' but the docker CLI is not available",
+            )
+        run_args = wrap_command(args, workdir, sandbox, env)
+    result = await run_process(run_args, cwd=workdir, timeout=timeout, env=env)
     output = (result.stdout + "\n" + result.stderr).strip()
     tail = output[-3000:]
     base = {

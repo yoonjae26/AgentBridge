@@ -17,11 +17,14 @@ from sqlalchemy import (
     Text,
     create_engine,
     event,
+    inspect,
     select,
 )
 from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column, sessionmaker
 
 SCHEMA_VERSION = 1
+MIGRATIONS_DIR = Path(__file__).parent / "migrations"
+BASELINE_REVISION = "0001"
 
 
 def utcnow() -> str:
@@ -167,18 +170,34 @@ class Database:
         self._migrate()
 
     def _migrate(self) -> None:
-        # Schema is created from metadata. A versioned migration tool (Alembic) is
-        # planned; the stored schema version lets us detect incompatible databases.
-        Base.metadata.create_all(self.engine)
-        with self.session() as session, session.begin():
-            row = session.get(Meta, "schema_version")
-            if row is None:
-                session.add(Meta(key="schema_version", value=str(SCHEMA_VERSION)))
-            elif int(row.value) > SCHEMA_VERSION:
+        """Bring the schema to the latest Alembic revision.
+
+        Databases created by AgentBridge 0.1.0 (before Alembic) already contain the
+        revision-0001 schema; they are stamped instead of re-created.
+        """
+        from alembic import command
+        from alembic.config import Config
+        from alembic.runtime.migration import MigrationContext
+        from alembic.script import ScriptDirectory
+
+        config = Config()
+        config.set_main_option("script_location", str(MIGRATIONS_DIR))
+        script = ScriptDirectory.from_config(config)
+        with self.engine.begin() as connection:
+            config.attributes["connection"] = connection
+            current = MigrationContext.configure(connection).get_current_revision()
+            if current is not None and current not in {s.revision for s in script.walk_revisions()}:
                 raise RuntimeError(
-                    f"Database schema version {row.value} is newer than this AgentBridge "
-                    f"release supports ({SCHEMA_VERSION}). Upgrade AgentBridge."
+                    f"Database schema revision {current} is newer than this AgentBridge "
+                    "release supports. Upgrade AgentBridge."
                 )
+            tables = set(inspect(connection).get_table_names())
+            if current is None and {"tasks", "runs"} <= tables:
+                command.stamp(config, BASELINE_REVISION)
+            command.upgrade(config, "head")
+        with self.session() as session, session.begin():
+            if session.get(Meta, "schema_version") is None:
+                session.add(Meta(key="schema_version", value=str(SCHEMA_VERSION)))
 
     def session(self) -> Session:
         return self._sessions()

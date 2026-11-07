@@ -404,6 +404,16 @@ class Orchestrator:
             heartbeat = asyncio.create_task(self._heartbeat(task_id, adapter, execution_id))
             try:
                 result = await adapter.execute(request)
+            except BaseException as exc:
+                # Never leave the execution record in "running" when the adapter
+                # raises (policy violation, crash, task cancellation).
+                self.store.update_execution(
+                    execution_id,
+                    status=ExecutionState.FAILED.value,
+                    finished_at=utcnow(),
+                    error=f"{type(exc).__name__}: {getattr(exc, 'message', exc)}",
+                )
+                raise
             finally:
                 heartbeat.cancel()
                 with contextlib.suppress(asyncio.CancelledError):

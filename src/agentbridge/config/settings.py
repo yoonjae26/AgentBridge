@@ -115,6 +115,28 @@ class WorkspaceSettings(_Strict):
         return value
 
 
+class DockerSandboxSettings(_Strict):
+    image: str = "python:3.12-slim"
+    network: Literal["none", "bridge"] = "none"
+    memory: str = "2g"
+    cpus: float = Field(default=2.0, gt=0, le=64)
+    pids_limit: int = Field(default=512, ge=16, le=100_000)
+
+    @field_validator("image")
+    @classmethod
+    def _valid_image(cls, value: str) -> str:
+        if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._/:@-]{0,254}", value):
+            raise ValueError("invalid docker image reference")
+        return value
+
+    @field_validator("memory")
+    @classmethod
+    def _valid_memory(cls, value: str) -> str:
+        if not re.fullmatch(r"\d+[kmg]?", value):
+            raise ValueError("memory must look like 512m or 2g")
+        return value
+
+
 class ValidationSettings(_Strict):
     run_tests: bool = True
     run_lint: bool = True
@@ -131,6 +153,9 @@ class ValidationSettings(_Strict):
     lint_blocking: bool = True
     command_timeout_seconds: int = Field(default=600, ge=1, le=7200)
     max_changed_files: int = Field(default=200, ge=1)
+    # "docker" runs validation commands in a network-less, resource-limited container.
+    sandbox: Literal["none", "docker"] = "none"
+    docker: DockerSandboxSettings = Field(default_factory=DockerSandboxSettings)
 
 
 class SecuritySettings(_Strict):

@@ -25,6 +25,7 @@ dependencies = [
     "pydantic>=2.7,<3",
     "SQLAlchemy>=2.0.30,<2.1",
     "PyYAML>=6.0.1,<7",
+    "alembic>=1.13,<2",
 ]
 
 [project.optional-dependencies]
@@ -56,6 +57,10 @@ artifacts = ["src/agentbridge/dashboard/static/**"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
+filterwarnings = [
+    # Third-party: starlette's TestClient asks for a different HTTP client package.
+    "ignore:Using `httpx` with `starlette.testclient` is deprecated",
+]
 markers = [
     "integration: tests that use git and subprocesses",
 ]
@@ -86,6 +91,10 @@ warn_unused_ignores = true
 plugins = ["pydantic.mypy"]
 packages = ["agentbridge"]
 mypy_path = "src"
+
+[[tool.mypy.overrides]]
+module = ["agentbridge.storage.migrations.*"]
+disallow_untyped_defs = false
 
 [[tool.mypy.overrides]]
 module = ["yaml.*"]

@@ -79,3 +79,38 @@ def test_secrets_redacted_on_write(tmp_path: Path):
         "r1-task-001", error_message="failed with key sk-ant-api03-ABCDEFGHIJKLMNOPQRSTUV"
     )
     assert "sk-ant" not in (store.get_task("r1-task-001").error_message or "")
+
+
+def test_alembic_fresh_and_legacy_databases(tmp_path: Path):
+    from sqlalchemy import create_engine, text
+
+    from agentbridge.storage.database import Base
+
+    fresh = Database(tmp_path / "fresh.db")
+    with fresh.engine.connect() as conn:
+        assert conn.execute(text("SELECT version_num FROM alembic_version")).scalar() == "0001"
+    fresh.close()
+
+    # A database created by v0.1.0 (metadata.create_all, no alembic_version table).
+    legacy_path = tmp_path / "legacy.db"
+    engine = create_engine(f"sqlite:///{legacy_path.as_posix()}")
+    Base.metadata.create_all(engine)
+    engine.dispose()
+    legacy = Database(legacy_path)
+    seed(Store(legacy))  # schema usable, data writable
+    with legacy.engine.connect() as conn:
+        assert conn.execute(text("SELECT version_num FROM alembic_version")).scalar() == "0001"
+    legacy.close()
+
+
+def test_newer_schema_revision_is_refused(tmp_path: Path):
+    from sqlalchemy import text
+
+    path = tmp_path / "db.sqlite"
+    Database(path).close()
+    db = Database(path)
+    with db.engine.begin() as conn:
+        conn.execute(text("UPDATE alembic_version SET version_num = '9999'"))
+    db.close()
+    with pytest.raises(RuntimeError, match="newer"):
+        Database(path)

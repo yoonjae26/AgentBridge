@@ -71,6 +71,13 @@ validation:
   lint_blocking: true
   command_timeout_seconds: 600
   max_changed_files: 200         # more than this needs human review
+  sandbox: none                  # none | docker
+  docker:                        # used when sandbox: docker
+    image: python:3.12-slim      # must contain your test/lint tools
+    network: none                # none | bridge
+    memory: 2g
+    cpus: 2
+    pids_limit: 512
 
 security:
   policy: standard               # safe | standard | trusted
@@ -84,6 +91,22 @@ security:
 commands at your project's own tooling if it uses a different environment, e.g.
 `["uv", "run", "pytest", "-q"]` (add `uv` to `extra_allowed_commands` under the
 `standard` policy).
+
+## Docker sandbox for validation
+
+With `validation.sandbox: docker`, every validation command runs as
+`docker run --rm --network none --cap-drop ALL --security-opt no-new-privileges
+--memory … --cpus … --pids-limit … -v <worktree>:/workspace <image> <command>`.
+`{python}` then means the container's `python`. The image must contain the tools
+your commands use; for example:
+
+```dockerfile
+FROM python:3.12-slim
+RUN pip install --no-cache-dir pytest ruff mypy
+```
+
+If Docker is configured but not available, the step **fails** instead of running the
+code on the host. Agents (e.g. Claude Code) still run on the host.
 
 ## Provider types
 

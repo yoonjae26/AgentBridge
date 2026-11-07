@@ -69,8 +69,8 @@ or external database: one CLI process orchestrates work and persists state in SQ
    plan does not need an approval between each step. Approving the last task merges
    the chain.
 6. **No hidden infrastructure.** SQLite (WAL) is sufficient for one developer machine.
-   Schema is created from the ORM metadata and versioned in a `meta` table; Alembic
-   migrations are planned (see roadmap).
+   The schema is managed by Alembic (`storage/migrations`) and upgraded automatically
+   when a database is opened; databases from before Alembic are stamped at `0001`.
 
 ## Data layout in a project
 

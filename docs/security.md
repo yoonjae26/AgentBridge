@@ -9,8 +9,10 @@ isolated and reviewable until a human approves them, (3) never destroying user w
 or history, and (4) keeping credentials out of logs, reports and the database.
 
 **A git worktree is not a sandbox.** An agent process can read and write anything
-your user can. Use a container or VM for untrusted repositories (Docker isolation is
-on the roadmap, not implemented).
+your user can. `validation.sandbox: docker` runs AgentBridge's own checks (tests,
+lint, type checks over agent-written code) in a network-less, capability-dropped,
+resource-limited container that fails closed when Docker is missing. Agent processes
+are not containerised; use a VM for untrusted repositories.
 
 ## Controls
 

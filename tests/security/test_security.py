@@ -153,6 +153,8 @@ def test_agent_cannot_write_outside_workspace(orchestrator_factory, repo):
     task = orchestrator.store.get_task(summary.task_ids[0])
     assert task.status == "FAILED"
     assert "traversal" in (task.error_message or "").lower()
+    execution = orchestrator.store.list_executions(task.id)[0]
+    assert execution.status == "failed" and execution.finished_at is not None
     assert not (repo.parent / "escaped.txt").exists()
     assert not (repo / "escaped.txt").exists()
 

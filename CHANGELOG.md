@@ -12,6 +12,14 @@ All notable changes are documented here. The format follows
   frontend shipped prebuilt). Overview, runs, task graph, task detail with diff,
   validation steps, agent output and event timeline, live updates over server-sent
   events, token-protected approve/reject/cancel, AgentBench results. Loopback only.
+- Alembic schema migrations; pre-Alembic databases are upgraded in place.
+- `validation.sandbox: docker`: validation commands run in a network-less,
+  resource-limited container and fail closed if Docker is unavailable.
+
+### Fixed
+
+- Execution records no longer stay `running` when an adapter raises.
+- Third-party test-client deprecation warning silenced.
 
 ## 0.1.0 - 2026-11-08
 
