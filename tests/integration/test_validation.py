@@ -1,5 +1,7 @@
 import asyncio
 import shutil
+import subprocess
+import sys
 from pathlib import Path
 
 import pytest
@@ -114,7 +116,7 @@ def test_docker_wrapper_is_locked_down(tmp_path: Path):
 def test_docker_sandbox_fails_closed_without_docker(repo: Path, monkeypatch):
     import agentbridge.validation.runners as runners
 
-    monkeypatch.setattr(runners, "docker_available", lambda: False)
+    monkeypatch.setattr(runners, "docker_available", lambda _settings=None: False)
     ws = setup_workspace(repo, {"a.txt": "x\n"})
     report = asyncio.run(
         engine(run_lint=False, sandbox="docker").validate(ws.path, ws.base_commit or "")
@@ -124,7 +126,20 @@ def test_docker_sandbox_fails_closed_without_docker(repo: Path, monkeypatch):
     assert "docker" in tests.summary
 
 
-@pytest.mark.skipif(shutil.which("docker") is None, reason="docker not installed")
+def _docker_command() -> list[str] | None:
+    if shutil.which("docker"):
+        return ["docker"]
+    if sys.platform == "win32" and shutil.which("wsl"):
+        probe = subprocess.run(["wsl", "-e", "docker", "info"], capture_output=True, check=False)
+        if probe.returncode == 0:
+            return ["wsl", "docker"]
+    return None
+
+
+DOCKER_COMMAND = _docker_command()
+
+
+@pytest.mark.skipif(DOCKER_COMMAND is None, reason="docker not available")
 def test_docker_sandbox_runs_tests_without_network(repo: Path):
     ws = setup_workspace(
         repo,
@@ -140,8 +155,31 @@ def test_docker_sandbox_runs_tests_without_network(repo: Path):
     eng = engine(
         run_lint=False,
         sandbox="docker",
+        docker={"command": DOCKER_COMMAND},
         test_command=["{python}", "-m", "unittest", "discover", "-v"],
     )
     report = asyncio.run(eng.validate(ws.path, ws.base_commit or ""))
     tests = report.step("tests")
     assert tests is not None and tests.exit_code == 0, tests.output_tail
+    assert "Ran 1 test" in tests.output_tail
+
+
+def test_docker_via_wsl_translates_paths():
+    from agentbridge.config.settings import DockerSandboxSettings
+    from agentbridge.execution.sandbox import to_wsl_path, wrap_command
+
+    settings = DockerSandboxSettings(command=["wsl", "docker"])
+    args = wrap_command(["python", "-V"], Path("E:/work/repo"), settings, {})
+    assert args[:3] == ["wsl", "docker", "run"]
+    if Path("E:/work/repo").resolve().drive.upper() == "E:":
+        assert "/mnt/e/work/repo:/workspace" in args
+    assert to_wsl_path(Path("/tmp/x")).endswith("/tmp/x")
+
+
+def test_docker_command_is_validated():
+    from pydantic import ValidationError
+
+    from agentbridge.config.settings import DockerSandboxSettings
+
+    with pytest.raises(ValidationError):
+        DockerSandboxSettings(command=["bash", "-c", "rm -rf /"])

@@ -15,6 +15,7 @@ All notable changes are documented here. The format follows
 - Alembic schema migrations; pre-Alembic databases are upgraded in place.
 - `validation.sandbox: docker`: validation commands run in a network-less,
   resource-limited container and fail closed if Docker is unavailable.
+  `validation.docker.command: [wsl, docker]` supports Docker inside WSL on Windows.
 
 ### Fixed
 

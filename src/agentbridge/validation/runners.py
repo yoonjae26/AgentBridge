@@ -71,7 +71,7 @@ async def run_command_step(
     env = validation_environment(None if sandbox else cache_dir)
     run_args = args
     if sandbox is not None:
-        if not docker_available():
+        if not docker_available(sandbox):
             # Fail closed: never fall back to running agent-written code on the host.
             return StepResult(
                 name=name,

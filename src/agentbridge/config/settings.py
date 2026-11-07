@@ -116,11 +116,24 @@ class WorkspaceSettings(_Strict):
 
 
 class DockerSandboxSettings(_Strict):
+    # How to invoke the Docker CLI, e.g. ["wsl", "docker"] on Windows with Docker in WSL.
+    command: list[str] = Field(default_factory=lambda: ["docker"], min_length=1, max_length=4)
     image: str = "python:3.12-slim"
     network: Literal["none", "bridge"] = "none"
     memory: str = "2g"
     cpus: float = Field(default=2.0, gt=0, le=64)
     pids_limit: int = Field(default=512, ge=16, le=100_000)
+
+    @field_validator("command")
+    @classmethod
+    def _valid_command(cls, value: list[str]) -> list[str]:
+        if value not in (["docker"], ["wsl", "docker"], ["podman"]) and not (
+            len(value) == 1 and value[0].lower().endswith(("docker", "docker.exe"))
+        ):
+            raise ValueError(
+                "docker.command must be ['docker'], ['wsl', 'docker'] or a docker path"
+            )
+        return value
 
     @field_validator("image")
     @classmethod

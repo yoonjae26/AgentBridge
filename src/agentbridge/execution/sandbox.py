@@ -19,8 +19,21 @@ CONTAINER_WORKDIR = "/workspace"
 _PASSTHROUGH_ENV = ("PYTHONDONTWRITEBYTECODE", "PYTEST_ADDOPTS", "RUFF_NO_CACHE")
 
 
-def docker_available() -> bool:
-    return resolve_executable("docker") is not None
+def docker_available(settings: DockerSandboxSettings | None = None) -> bool:
+    command = settings.command if settings else ["docker"]
+    return resolve_executable(command[0]) is not None
+
+
+def _uses_wsl(settings: DockerSandboxSettings) -> bool:
+    return settings.command[0].lower() in ("wsl", "wsl.exe")
+
+
+def to_wsl_path(path: Path) -> str:
+    """E:\\work\repo -> /mnt/e/work/repo (Docker running inside WSL)."""
+    text = str(path.resolve()).replace("\\", "/")
+    if len(text) >= 2 and text[1] == ":":
+        return f"/mnt/{text[0].lower()}{text[2:]}"
+    return text
 
 
 def expand_for_container(command: list[str]) -> list[str]:
@@ -31,8 +44,10 @@ def expand_for_container(command: list[str]) -> list[str]:
 def wrap_command(
     inner: list[str], workdir: Path, settings: DockerSandboxSettings, env: dict[str, str]
 ) -> list[str]:
+    via_wsl = _uses_wsl(settings)
+    mount = to_wsl_path(workdir) if via_wsl else str(workdir.resolve())
     args = [
-        "docker",
+        *settings.command,
         "run",
         "--rm",
         "--init",
@@ -49,13 +64,13 @@ def wrap_command(
         "--cap-drop",
         "ALL",
         "-v",
-        f"{workdir.resolve()}:{CONTAINER_WORKDIR}",
+        f"{mount}:{CONTAINER_WORKDIR}",
         "-w",
         CONTAINER_WORKDIR,
         "-e",
         "HOME=/tmp",
     ]
-    if sys.platform != "win32" and hasattr(os, "getuid"):
+    if not via_wsl and sys.platform != "win32" and hasattr(os, "getuid"):
         # Files created in the mounted worktree stay owned by the user.
         args += ["--user", f"{os.getuid()}:{os.getgid()}"]
     for name in _PASSTHROUGH_ENV:

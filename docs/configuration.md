@@ -73,6 +73,7 @@ validation:
   max_changed_files: 200         # more than this needs human review
   sandbox: none                  # none | docker
   docker:                        # used when sandbox: docker
+    command: [docker]            # Windows with Docker inside WSL: [wsl, docker]
     image: python:3.12-slim      # must contain your test/lint tools
     network: none                # none | bridge
     memory: 2g
@@ -104,6 +105,10 @@ your commands use; for example:
 FROM python:3.12-slim
 RUN pip install --no-cache-dir pytest ruff mypy
 ```
+
+On Windows with Docker installed inside WSL (not Docker Desktop), set
+`command: [wsl, docker]`; worktree paths such as `E:\repo` are translated to
+`/mnt/e/repo` automatically.
 
 If Docker is configured but not available, the step **fails** instead of running the
 code on the host. Agents (e.g. Claude Code) still run on the host.
