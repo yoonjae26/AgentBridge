@@ -10,8 +10,8 @@
 ## From source
 
 ```bash
-git clone https://github.com/agentbridge/agentbridge.git
-cd agentbridge
+git clone https://github.com/yoonjae26/AgentBridge.git
+cd AgentBridge
 python -m venv .venv
 source .venv/bin/activate          # Windows: .venv\Scripts\activate
 pip install -e ".[dev]"

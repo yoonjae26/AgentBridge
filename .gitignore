@@ -27,3 +27,6 @@ benchmarks/experiments/
 Thumbs.db
 .idea/
 .vscode/
+
+# Dashboard frontend dependencies (the built bundle in src/agentbridge/dashboard/static is committed)
+dashboard/node_modules/

@@ -6,6 +6,13 @@ All notable changes are documented here. The format follows
 
 ## Unreleased
 
+### Added
+
+- Local web dashboard: `agentbridge dashboard` (FastAPI backend, React + TypeScript
+  frontend shipped prebuilt). Overview, runs, task graph, task detail with diff,
+  validation steps, agent output and event timeline, live updates over server-sent
+  events, token-protected approve/reject/cancel, AgentBench results. Loopback only.
+
 ## 0.1.0 - 2026-11-08
 
 ### Added

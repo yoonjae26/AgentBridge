@@ -31,8 +31,9 @@ Not done in v0.1.0 (carried forward):
 
 ## v0.3.0
 
-- Web dashboard and live execution monitoring (FastAPI + React), only after the CLI
-  workflow is proven reliable.
+- Dashboard: authentication for multi-user setups, run submission from the UI,
+  charts over time. (A local single-user dashboard with live monitoring shipped early,
+  in the 0.1.x line.)
 - Advanced routing (historical success rates, cost/latency estimates).
 - Cost optimisation.
 
