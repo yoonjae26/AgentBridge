@@ -17,6 +17,10 @@ All notable changes are documented here. The format follows
   resource-limited container and fail closed if Docker is unavailable.
   `validation.docker.command: [wsl, docker]` supports Docker inside WSL on Windows.
 
+- Claude Code container isolation (`providers.claude.container`): only the worktree
+  is mounted, a single token is passed by variable name, read-only root filesystem,
+  dropped capabilities, shell/web tools disallowed, fail-closed.
+
 ### Fixed
 
 - Execution records no longer stay `running` when an adapter raises.

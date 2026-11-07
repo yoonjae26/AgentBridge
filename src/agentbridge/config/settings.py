@@ -61,6 +61,60 @@ class OrchestrationSettings(_Strict):
         return value
 
 
+def _check_docker_command(value: list[str]) -> list[str]:
+    if value not in (["docker"], ["wsl", "docker"], ["podman"]) and not (
+        len(value) == 1 and value[0].lower().endswith(("docker", "docker.exe"))
+    ):
+        raise ValueError("command must be ['docker'], ['wsl', 'docker'] or a docker path")
+    return value
+
+
+def _check_image(value: str) -> str:
+    if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._/:@-]{0,254}", value):
+        raise ValueError("invalid docker image reference")
+    return value
+
+
+def _check_memory(value: str) -> str:
+    if not re.fullmatch(r"\d+[kmg]?", value):
+        raise ValueError("memory must look like 512m or 2g")
+    return value
+
+
+class AgentContainerSettings(_Strict):
+    """Run a CLI agent inside a locked-down container (claude_code only for now).
+
+    Credentials are never mounted: only one token environment variable is passed
+    through by *name*, so its value never appears on a command line, in logs or in
+    the image. The container sees only the task worktree.
+    """
+
+    enabled: bool = False
+    command: list[str] = Field(default_factory=lambda: ["docker"], min_length=1, max_length=4)
+    image: str = "agentbridge-claude:latest"
+    token_env: Literal["CLAUDE_CODE_OAUTH_TOKEN", "ANTHROPIC_API_KEY"] = "CLAUDE_CODE_OAUTH_TOKEN"  # noqa: S105 - a variable name
+    memory: str = "4g"
+    cpus: float = Field(default=2.0, gt=0, le=64)
+    pids_limit: int = Field(default=512, ge=16, le=100_000)
+    # Tools the agent may not use inside the container (limits exfiltration paths).
+    disallowed_tools: list[str] = Field(default_factory=lambda: ["Bash", "WebFetch", "WebSearch"])
+
+    @field_validator("command")
+    @classmethod
+    def _valid_command(cls, value: list[str]) -> list[str]:
+        return _check_docker_command(value)
+
+    @field_validator("image")
+    @classmethod
+    def _valid_image(cls, value: str) -> str:
+        return _check_image(value)
+
+    @field_validator("memory")
+    @classmethod
+    def _valid_memory(cls, value: str) -> str:
+        return _check_memory(value)
+
+
 class ProviderSettings(_Strict):
     """Settings for one provider entry. Unused fields are ignored per adapter type."""
 
@@ -85,6 +139,8 @@ class ProviderSettings(_Strict):
     ] = "success"
     delay_seconds: float = Field(default=0.0, ge=0, le=3600)
     files: dict[str, str] = Field(default_factory=dict)
+    # claude_code: optional container isolation
+    container: AgentContainerSettings = Field(default_factory=AgentContainerSettings)
 
     @field_validator("extra_args")
     @classmethod
@@ -127,27 +183,17 @@ class DockerSandboxSettings(_Strict):
     @field_validator("command")
     @classmethod
     def _valid_command(cls, value: list[str]) -> list[str]:
-        if value not in (["docker"], ["wsl", "docker"], ["podman"]) and not (
-            len(value) == 1 and value[0].lower().endswith(("docker", "docker.exe"))
-        ):
-            raise ValueError(
-                "docker.command must be ['docker'], ['wsl', 'docker'] or a docker path"
-            )
-        return value
+        return _check_docker_command(value)
 
     @field_validator("image")
     @classmethod
     def _valid_image(cls, value: str) -> str:
-        if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._/:@-]{0,254}", value):
-            raise ValueError("invalid docker image reference")
-        return value
+        return _check_image(value)
 
     @field_validator("memory")
     @classmethod
     def _valid_memory(cls, value: str) -> str:
-        if not re.fullmatch(r"\d+[kmg]?", value):
-            raise ValueError("memory must look like 512m or 2g")
-        return value
+        return _check_memory(value)
 
 
 class ValidationSettings(_Strict):

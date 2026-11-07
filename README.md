@@ -101,7 +101,8 @@ the task worktree, sends the prompt on stdin and records tokens and the CLI's
 | Generic CLI adapter for other agents | ⚠️ capabilities are user-declared |
 | Alembic schema migrations (legacy databases upgraded in place) | ✅ |
 | Docker sandbox for validation commands (no network, resource limits) | ⚠️ validation only — agents are not containerised |
-| Dedicated Codex/OpenCode adapters, containerised agents | ❌ planned |
+| Claude Code in a locked-down container (no credentials or home mounted) | ⚠️ implemented and unit-tested; not yet run end-to-end |
+| Dedicated Codex/OpenCode adapters | ❌ planned |
 
 ## ⚙️ How it works
 

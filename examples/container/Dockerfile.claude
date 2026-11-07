@@ -1,0 +1,17 @@
+# Minimal image for running Claude Code under AgentBridge container isolation.
+#
+#   docker build -t agentbridge-claude:latest -f Dockerfile.claude .
+#   (Docker inside WSL: run the same command in the WSL shell.)
+#
+# The image contains no credentials. AgentBridge passes a single token variable
+# (CLAUDE_CODE_OAUTH_TOKEN or ANTHROPIC_API_KEY) at run time and mounts only the
+# task worktree. The image's "node" user has uid/gid 1000.
+FROM node:22-slim
+
+ARG CLAUDE_CODE_VERSION=2.1.303
+RUN npm install -g "@anthropic-ai/claude-code@${CLAUDE_CODE_VERSION}" \
+    && npm cache clean --force
+
+USER node
+WORKDIR /workspace
+ENTRYPOINT []

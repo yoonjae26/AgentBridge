@@ -53,6 +53,42 @@ Additional checks:
 
 Protected git and filesystem operations stay blocked in every profile.
 
+## Running Claude Code in a container
+
+```yaml
+providers:
+  claude:
+    container:
+      enabled: true
+      command: [wsl, docker]        # or [docker]
+      image: agentbridge-claude:latest
+      token_env: CLAUDE_CODE_OAUTH_TOKEN
+```
+
+1. Build the image: `docker build -t agentbridge-claude:latest -f examples/container/Dockerfile.claude examples/container`.
+2. Run `claude setup-token` once and store the token in your **user** environment
+   variable `CLAUDE_CODE_OAUTH_TOKEN` (Windows: System Properties → Environment
+   Variables). Never put it in `agentbridge.yaml`, a `.env` committed to git, or a
+   command line.
+
+What stays private:
+
+| Data | Exposed to the container? |
+|---|---|
+| `~/.claude` (login, conversation history, settings) | **No**, never mounted |
+| Other projects, home directory, SSH/Git/cloud credentials | **No**, only the task worktree is mounted |
+| Other environment variables (GitHub, AWS, ... tokens) | **No**, only the one token variable |
+| The token value in logs / process list / image | **No**, passed by variable name; logs are redacted |
+| The token itself | Yes, to the Claude Code process (it needs it to call the API) |
+| Network | Yes, outbound access is required to reach the Anthropic API |
+
+Further hardening: read-only root filesystem, tmpfs home (nothing persists after
+`--rm`), non-root user, all capabilities dropped, `no-new-privileges`, memory/CPU/
+process limits, and the `Bash`, `WebFetch` and `WebSearch` tools disallowed. If
+Docker or the token is missing, the provider is reported unavailable; AgentBridge
+never falls back to the host or to mounting credentials. If an agent ever writes a
+token into a file, the diff review fails validation (`Possible credential added`).
+
 ## Remote agents
 
 Remote providers run in the provider's environment under its own permission model.

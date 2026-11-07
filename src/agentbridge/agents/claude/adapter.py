@@ -22,6 +22,11 @@ from agentbridge.agents.base import (
     UsageMetrics,
 )
 from agentbridge.agents.capabilities import Capability, OperationSupport, ProviderCapabilities
+from agentbridge.agents.claude.container import (
+    container_environment,
+    docker_run_args,
+    removal_args,
+)
 from agentbridge.config.settings import ProviderSettings
 from agentbridge.execution.process import ProcessResult, resolve_executable, run_process
 from agentbridge.security.secrets import redact, safe_environment
@@ -35,6 +40,35 @@ class ClaudeCodeAdapter(AgentAdapter):
         self.command = settings.command or "claude"
 
     async def check_availability(self) -> AvailabilityReport:
+        container = self.settings.container
+        if container.enabled:
+            details = [
+                f"Container mode: image {container.image}, docker command "
+                f"{' '.join(container.command)}",
+                "No host credentials or home directory are mounted.",
+            ]
+            docker = resolve_executable(container.command[0])
+            if docker is None:
+                return AvailabilityReport(
+                    available=False, details=[*details, f"'{container.command[0]}' not found"]
+                )
+            if not os.environ.get(container.token_env):
+                return AvailabilityReport(
+                    available=False,
+                    auth="missing",
+                    details=[
+                        *details,
+                        f"{container.token_env} is not set. Create a token with "
+                        "'claude setup-token' and store it in your user environment "
+                        "(never in agentbridge.yaml).",
+                    ],
+                )
+            return AvailabilityReport(
+                available=True,
+                executable=docker,
+                auth="ok",
+                details=[*details, f"{container.token_env} is set (value not inspected)"],
+            )
         executable = resolve_executable(self.command)
         if executable is None:
             return AvailabilityReport(
@@ -110,6 +144,8 @@ class ClaudeCodeAdapter(AgentAdapter):
         return args
 
     async def execute(self, request: ExecutionRequest) -> ExecutionResult:
+        if self.settings.container.enabled:
+            return await self._execute_in_container(request)
         executable = resolve_executable(self.command)
         if executable is None:
             return ExecutionResult(
@@ -135,6 +171,48 @@ class ClaudeCodeAdapter(AgentAdapter):
         finally:
             self._forget(request.execution_id)
         return self.parse_result(request, process)
+
+    async def _execute_in_container(self, request: ExecutionRequest) -> ExecutionResult:
+        container = self.settings.container
+        if request.workdir is None:
+            raise ValueError("Claude Code adapter requires a local working directory")
+        if resolve_executable(container.command[0]) is None or not os.environ.get(
+            container.token_env
+        ):
+            # Fail closed: never fall back to the host or to mounting credentials.
+            return ExecutionResult(
+                execution_id=request.execution_id,
+                provider=self.name,
+                state=ExecutionState.UNAVAILABLE,
+                error=f"Container mode needs '{container.command[0]}' and "
+                f"{container.token_env}; see 'agentbridge providers check'",
+            )
+        args = docker_run_args(
+            container, request.workdir, request.execution_id, self.build_args("claude", request)
+        )
+        env = container_environment(container)
+        cancel = self._cancel_event(request.execution_id)
+        try:
+            process = await run_process(
+                args,
+                cwd=request.workdir,
+                timeout=request.timeout_seconds,
+                env=env,
+                stdin_data=request.prompt,
+                cancel_event=cancel,
+            )
+        finally:
+            self._forget(request.execution_id)
+            # Killing the docker client does not always stop the container itself.
+            await run_process(
+                removal_args(container, request.execution_id),
+                cwd=request.workdir,
+                timeout=60,
+                env=env,
+            )
+        result = self.parse_result(request, process)
+        result.metadata["isolation"] = f"container:{container.image}"
+        return result
 
     def parse_result(self, request: ExecutionRequest, process: ProcessResult) -> ExecutionResult:
         request.output_dir.mkdir(parents=True, exist_ok=True)
