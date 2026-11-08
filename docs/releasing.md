@@ -17,16 +17,19 @@ API token is stored in the repository or in GitHub secrets.
 2. Open **Your account → Publishing → Add a new pending publisher** and add it
    **twice**, once per project:
 
-   | Field | Value |
-   |---|---|
-   | PyPI project name | `agentbridge-core` (then again: `agentbridge-bench`) |
-   | Owner | `yoonjae26` |
-   | Repository name | `AgentBridge` |
-   | Workflow name | `release.yml` |
-   | Environment name | `pypi` |
+   | Field | `agentbridge-core` | `agentbridge-bench` |
+   |---|---|---|
+   | Owner | `yoonjae26` | `yoonjae26` |
+   | Repository name | `AgentBridge` | `AgentBridge` |
+   | Workflow name | `release.yml` | `release.yml` |
+   | Environment name | `pypi` | `pypi-bench` |
 
-3. In GitHub: **Settings → Environments → New environment** named `pypi`. Optionally
-   add yourself as a required reviewer so every upload waits for your click.
+   PyPI rejects two pending publishers with an identical configuration, which is why
+   each package has its own environment.
+
+3. In GitHub: **Settings → Environments → New environment**, create `pypi` and
+   `pypi-bench`. Optionally add yourself as a required reviewer so every upload waits
+   for your click.
 
 A pending publisher becomes a normal one after the first successful upload.
 

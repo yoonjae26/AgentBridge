@@ -29,12 +29,12 @@ jobs:
       - run: python -m pip install build
       - name: Build agentbridge-core and agentbridge-bench
         run: |
-          python -m build --outdir dist .
-          python -m build --wheel --outdir dist packages/agentbridge-bench  # wheel only: it bundles ../../benchmarks
+          python -m build --outdir dist/core .
+          python -m build --wheel --outdir dist/bench packages/agentbridge-bench  # wheel only: it bundles ../../benchmarks
       - name: Smoke-test both wheels in a clean environment
         run: |
           python -m venv /tmp/clean
-          /tmp/clean/bin/pip install dist/*.whl
+          /tmp/clean/bin/pip install dist/core/*.whl dist/bench/*.whl
           /tmp/clean/bin/agentbridge --version
           cd /tmp && /tmp/clean/bin/agentbridge-bench list
       - uses: actions/upload-artifact@v4
@@ -42,7 +42,9 @@ jobs:
           name: dist
           path: dist/
 
-  publish-pypi:
+  # PyPI allows one trusted-publisher configuration per project, so each package
+  # publishes from its own environment.
+  publish-core:
     needs: build
     runs-on: ubuntu-latest
     environment:
@@ -56,9 +58,28 @@ jobs:
           name: dist
           path: dist/
       - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: dist/core/
+
+  publish-bench:
+    needs: publish-core # agentbridge-bench depends on agentbridge-core
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi-bench
+      url: https://pypi.org/project/agentbridge-bench/
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: dist/bench/
 
   github-release:
-    needs: publish-pypi
+    needs: publish-bench
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -71,4 +92,4 @@ jobs:
       - name: Create GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" dist/* --notes-file CHANGELOG.md --verify-tag
+        run: gh release create "$GITHUB_REF_NAME" dist/core/* dist/bench/* --notes-file CHANGELOG.md --verify-tag
