@@ -64,8 +64,10 @@ def test_first_milestone_workflow(repo: Path, monkeypatch):
 
     result = invoke(["report", task_id, "--format", "json"], repo, monkeypatch)
     assert result.exit_code == 0
+    # stdout must be valid, unwrapped JSON (long strings once got line-wrapped).
+    report = json.loads(result.stdout)
     report_path = repo / ".agentbridge" / "reports" / f"{task_id}.json"
-    report = json.loads(report_path.read_text(encoding="utf-8"))
+    assert report == json.loads(report_path.read_text(encoding="utf-8"))
     assert report["task"]["status"] == "WAITING_FOR_APPROVAL"
     assert report["validation"]["outcome"] in ("PASS", "WARNING")
     assert report["executions"][0]["provider"] == "mock"

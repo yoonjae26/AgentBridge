@@ -276,6 +276,10 @@ def report_command(
     except NotFoundError:
         task = ctx.store.find_task(ref)
         json_path, md_path = write_task_report(ctx.store, task.id, reports_dir)
-    path = json_path if fmt == "json" else md_path
-    console.print(path.read_text(encoding="utf-8"), markup=False)
+    if fmt == "json":
+        # Raw, unwrapped JSON on stdout so it can be piped to other tools.
+        typer.echo(json_path.read_text(encoding="utf-8").rstrip())
+        typer.echo(f"Saved: {md_path} and {json_path}", err=True)
+        return
+    console.print(md_path.read_text(encoding="utf-8"), markup=False, soft_wrap=True)
     console.print(f"[dim]Saved: {md_path} and {json_path}[/dim]")

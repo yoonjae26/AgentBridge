@@ -264,6 +264,12 @@ agentbridge-bench run core  -c claude-single -c claude-multi -n 3
 > vs multi-agent conclusions from this repository yet.
 > [Methodology](docs/benchmark-methodology.md).
 
+## Use it from your coding agent
+
+The free [AgentBridge skill](skills/agentbridge) teaches Claude Code (or any agent that
+supports Agent Skills) to delegate work through the CLI, read the JSON report and hand
+you the approve / reject decision. It never approves on its own.
+
 ## Status
 
 **Working** · CLI · SQLite state machine · mock and Claude Code adapters · worktree

@@ -6,7 +6,15 @@ All notable changes are documented here. The format follows
 
 ## Unreleased
 
-_Nothing yet._
+### Added
+
+- `skills/agentbridge`: a free Agent Skill that drives the AgentBridge CLI from Claude
+  Code and other agents and leaves approval to the human.
+
+### Fixed
+
+- `agentbridge report --format json` printed line-wrapped, invalid JSON with a trailing
+  status line on stdout. It now prints the raw JSON on stdout and the status on stderr.
 
 ## 0.1.0 - 2026-11-08
 
