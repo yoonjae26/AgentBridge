@@ -1,172 +1,182 @@
-<div align="center">
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/brand/banner-dark.svg">
+    <img src="assets/brand/banner-light.svg" alt="AgentBridge: Agents propose. You approve." width="100%">
+  </picture>
+</p>
 
-# 🌉 AgentBridge
+<p align="center">
+  <a href="https://github.com/yoonjae26/AgentBridge/actions/workflows/tests.yml"><img alt="tests" src="https://img.shields.io/github/actions/workflow/status/yoonjae26/AgentBridge/tests.yml?branch=main&style=flat-square&label=tests&labelColor=0B1220&color=FFB000"></a>
+  <a href="https://github.com/yoonjae26/AgentBridge/actions/workflows/ci.yml"><img alt="ci" src="https://img.shields.io/github/actions/workflow/status/yoonjae26/AgentBridge/ci.yml?branch=main&style=flat-square&label=ci&labelColor=0B1220&color=FFB000"></a>
+  <img alt="python" src="https://img.shields.io/badge/python-3.12%2B-FFB000?style=flat-square&labelColor=0B1220">
+  <img alt="mypy" src="https://img.shields.io/badge/mypy-strict-FFB000?style=flat-square&labelColor=0B1220">
+  <a href="LICENSE"><img alt="license" src="https://img.shields.io/badge/license-MIT-FFB000?style=flat-square&labelColor=0B1220"></a>
+</p>
 
-### One interface. Multiple AI agents. Reliable software delivery.
+<p align="center">
+  <b><a href="#start">Start</a></b> &nbsp;·&nbsp;
+  <b><a href="#account">Your account</a></b> &nbsp;·&nbsp;
+  <b><a href="#track">The track</a></b> &nbsp;·&nbsp;
+  <b><a href="#dashboard">Dashboard</a></b> &nbsp;·&nbsp;
+  <b><a href="#bench">AgentBench</a></b> &nbsp;·&nbsp;
+  <b><a href="#docs">Docs</a></b>
+</p>
 
-Plan, dispatch, isolate, validate and approve the work of AI coding agents —
-and measure whether multi-agent collaboration actually helps.
+<br>
 
-[![tests](https://github.com/yoonjae26/AgentBridge/actions/workflows/tests.yml/badge.svg)](https://github.com/yoonjae26/AgentBridge/actions/workflows/tests.yml)
-[![ci](https://github.com/yoonjae26/AgentBridge/actions/workflows/ci.yml/badge.svg)](https://github.com/yoonjae26/AgentBridge/actions/workflows/ci.yml)
-![Python](https://img.shields.io/badge/python-3.12%2B-3776AB?logo=python&logoColor=white)
-![Status](https://img.shields.io/badge/status-alpha-orange)
-[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
-![Ruff](https://img.shields.io/badge/lint-ruff-D7FF64?logo=ruff&logoColor=black)
-![mypy](https://img.shields.io/badge/types-mypy%20strict-2A6DB2)
+> **AgentBridge is a control tower for AI coding agents.** It plans the work, hands
+> each task to the right agent, keeps every agent on its own branch, checks the result
+> itself, and then **stops at a red signal until you say go.**
 
-[Quick start](#-quick-start) •
-[Features](#-features) •
-[How it works](#-how-it-works) •
-[Dashboard](#-dashboard) •
-[AgentBench](#-agentbench) •
-[Docs](#-documentation)
+<br>
 
-</div>
+## The three rules
 
----
+<table>
+<tr>
+<td width="33%" valign="top">
 
-## ✨ Why AgentBridge?
+**`01` The agent never merges.**<br>
+Every task lives in its own git worktree. Nothing reaches your branch until you run
+`tasks approve`. No force-push, no reset, no deleted branches, ever.
 
-Coding agents are powerful, but working with several of them is messy: different
-CLIs, copy-pasted prompts, agents overwriting each other, lost state after a crash,
-and "done!" claims nobody checked. AgentBridge sits between you and your agents:
+</td>
+<td width="33%" valign="top">
 
-| | |
-|---|---|
-| 🧭 **Plan & route** | Turns an objective into a dependency graph of tasks and sends each to a provider that *declares* the capabilities it needs. |
-| 🌿 **Isolate** | Every task runs in its own git worktree and branch. Your checkout is never touched. |
-| 🔍 **Verify** | Never trusts the agent: AgentBridge runs lint, type checks, tests and a diff review itself. |
-| ✋ **You approve** | Nothing is merged until you say so. No force-push, no reset, no deleted branches. |
-| 💾 **Recover** | State lives in SQLite; interrupted tasks are detected and resumed safely, never blindly re-run. |
-| 📊 **Measure** | AgentBench compares single- and multi-agent setups on reproducible tasks, with honest `n/a` for missing data. |
+**`02` "Done!" is not evidence.**<br>
+AgentBridge runs lint, type checks, tests and a diff review **itself**, and can lock
+those checks inside a Docker sandbox with no network.
 
-> [!NOTE]
-> **v0.1.0 — alpha.** Everything listed as ✅ below is implemented and covered by the
-> test suite (166 tests). See the [roadmap](docs/roadmap.md) for what is not done yet.
+</td>
+<td width="33%" valign="top">
 
-## 🚀 Quick start
+**`03` A crash is not a restart.**<br>
+Every transition is written to SQLite. After a crash, interrupted work is detected and
+resumed safely, never blindly re-run.
 
-**Requirements:** Python 3.12+, Git 2.38+. Claude Code is optional — the built-in mock
-provider needs no account.
+</td>
+</tr>
+</table>
+
+And one honest question: **does multi-agent collaboration actually beat a single
+agent?** [AgentBench](#bench) exists to measure it, not to assume it.
+
+<a id="start"></a>
+
+## Start in a minute
 
 ```bash
 git clone https://github.com/yoonjae26/AgentBridge.git
 cd AgentBridge
 python -m venv .venv
-source .venv/bin/activate          # Windows: .venv\Scripts\activate
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
 pip install -e ".[dev]"
 ```
 
 Then, inside **any** git repository with at least one commit:
 
 ```bash
-agentbridge init                                                       # create agentbridge.yaml
-agentbridge providers check                                            # what is available?
-agentbridge run "Create a Python hello world function" --provider mock # plan → run → validate
-agentbridge tasks list
-agentbridge report <task_id>                                           # what changed, what passed
-agentbridge tasks approve <task_id>                                    # merge — only when you decide
+agentbridge init                                   # writes agentbridge.yaml
+agentbridge providers check                        # who is on duty?
+agentbridge run "Add a hello() function" --provider mock
+agentbridge report <task_id>                       # what changed, what passed
+agentbridge tasks approve <task_id>                # green signal: merge
 ```
 
-### 🔑 Use your own Claude account
+The built-in `mock` provider needs no account. Requirements: Python 3.12+, Git 2.38+.
+
+<a id="account"></a>
+
+## Bring your own account
 
 > [!IMPORTANT]
-> This repository contains **no accounts, tokens or API keys**. Everyone runs AgentBridge
+> This repository ships **no accounts, tokens or API keys**. Everyone runs AgentBridge
 > with **their own** Claude subscription (Pro/Max) or their own Anthropic API key, and
-> usage is billed to that account. Never commit credentials: `agentbridge.yaml`, `.env`
-> and `.agentbridge/` are git-ignored on purpose.
+> usage is billed to that account. `agentbridge.yaml`, `.env` and `.agentbridge/` are
+> git-ignored so credentials never get committed.
 
-**Option A: run on your machine (simplest)**
+**On your machine.** Install [Claude Code](https://docs.anthropic.com/en/docs/claude-code),
+run `claude` once and log in with your account (or set `ANTHROPIC_API_KEY`). Then
+`agentbridge providers check` should show `claude … available`, and `--provider claude`
+does the rest. AgentBridge only checks that credentials *exist*; it never reads or
+stores them.
 
-1. Install [Claude Code](https://docs.anthropic.com/en/docs/claude-code) and log in once
-   with your own account: run `claude`, then `/login`. If you use the API instead, set
-   `ANTHROPIC_API_KEY` in your environment.
-2. `agentbridge providers check` should report `claude … available`.
-3. Run with `--provider claude`, or set `routing.default_worker: claude` in `agentbridge.yaml`.
+<details>
+<summary><b>In a locked-down container</b> (recommended for untrusted tasks)</summary>
+<br>
 
-AgentBridge calls `claude -p --output-format json --permission-mode acceptEdits` inside
-the task worktree, sends the prompt on stdin and records tokens and the CLI's
-*estimated* cost. AgentBridge never reads or stores your credentials; it only checks that
-they exist.
+The container sees only the task worktree: no `~/.claude`, no home directory, no other
+environment variables. The root filesystem is read-only, all capabilities are dropped,
+and the container is deleted after each run.
 
-**Option B: run Claude in an isolated container (recommended for untrusted tasks)**
-
-The container sees only the task worktree. Your `~/.claude` folder (login and history),
-your home directory and your other environment variables are never mounted.
-
-1. Build the image (needs Docker; on Windows, Docker in WSL works):
+1. Build the image (Docker; on Windows, Docker inside WSL works):
    ```bash
    docker build -t agentbridge-claude:latest -f examples/container/Dockerfile.claude examples/container
    ```
-2. Create a token for **your** account: `claude setup-token`. The token lets the
-   holder use your Claude quota, so treat it like a password.
-3. Put the token only in the current shell session, so it is gone when you close the
-   window:
+2. Create a token for **your** account with `claude setup-token`. Anyone holding it can
+   spend your quota, so treat it like a password.
+3. Keep it in the current shell only, so it disappears when the window closes:
    ```powershell
-   # PowerShell
-   $env:CLAUDE_CODE_OAUTH_TOKEN = Read-Host -MaskInput "Claude token"
+   $env:CLAUDE_CODE_OAUTH_TOKEN = Read-Host -MaskInput "Claude token"   # PowerShell
    ```
    ```bash
-   # bash / zsh
-   read -rs CLAUDE_CODE_OAUTH_TOKEN && export CLAUDE_CODE_OAUTH_TOKEN
+   read -rs CLAUDE_CODE_OAUTH_TOKEN && export CLAUDE_CODE_OAUTH_TOKEN    # bash / zsh
    ```
-4. Enable container mode in your local `agentbridge.yaml`. Don't write the token in it:
+4. Switch it on in your local `agentbridge.yaml` (the token never goes here):
    ```yaml
    providers:
      claude:
        container:
          enabled: true
-         command: [docker]          # Windows + WSL: [wsl, docker]
-         token_env: CLAUDE_CODE_OAUTH_TOKEN   # or ANTHROPIC_API_KEY
+         command: [docker]                  # Windows + WSL: [wsl, docker]
+         token_env: CLAUDE_CODE_OAUTH_TOKEN # or ANTHROPIC_API_KEY
    ```
 
-If Docker or the token is missing, AgentBridge refuses to run. It never falls back to
-the host. If a token may have leaked, revoke it from your Claude account and create a
-new one. See [docs/security.md](docs/security.md#running-claude-code-in-a-container)
-for the full privacy model.
+If Docker or the token is missing, AgentBridge refuses to run instead of falling back
+to the host. Full privacy model: [docs/security.md](docs/security.md#running-claude-code-in-a-container).
 
-## 🧩 Features
+</details>
 
-| Area | Status |
-|---|---|
-| CLI: `init`, `providers`, `run`, `tasks`, `logs`, `report`, `remote`, `benchmark`, `dashboard` | ✅ |
-| SQLite persistence (WAL), explicit state machine, full event history | ✅ |
-| Mock provider: success, failure, delay, interrupt, invalid output, unavailable | ✅ |
-| Claude Code adapter | ✅ verified with Claude Code 2.1.303 |
-| Git worktree per task, diff capture, overlap & merge-conflict detection | ✅ |
-| Validation: diff, scope, isolation, Ruff, Mypy, Pytest, heuristic review | ✅ |
-| Approval-gated merge | ✅ |
-| Planner (single / standard / provider JSON plan) and dependency scheduling | ✅ |
-| Retries with exponential backoff, cancellation, restart recovery | ✅ |
-| Local web dashboard with live updates | ✅ |
-| AgentBench: 12 tasks, 8 categories, JSON / CSV / Markdown / SVG reports | ✅ |
-| Google Antigravity remote agents | ⚠️ manual handoff only — no automated execution |
-| Generic CLI adapter for other agents | ⚠️ capabilities are user-declared |
-| Alembic schema migrations (legacy databases upgraded in place) | ✅ |
-| Docker sandbox for validation commands (no network, resource limits) | ⚠️ validation only — agents are not containerised |
-| Claude Code in a locked-down container (no credentials or home mounted) | ⚠️ implemented and unit-tested; not yet run end-to-end |
-| Dedicated Codex/OpenCode adapters | ❌ planned |
+<a id="track"></a>
 
-## ⚙️ How it works
+## The track
+
+Every objective travels the same line. The only stop that needs a human is the one
+that matters.
 
 ```mermaid
+%%{init: {'theme':'base','themeVariables':{'primaryColor':'#0B1220','primaryTextColor':'#E8EDF7','primaryBorderColor':'#5E6E8C','lineColor':'#8A94A6','fontFamily':'ui-monospace, Menlo, Consolas, monospace'}}}%%
 flowchart LR
-    U([👤 Developer]) -->|objective| P[Planner]
-    P -->|task graph| R[Router]
-    R -->|capability match| A{{Agent adapter<br/>mock · Claude Code ·<br/>Antigravity · generic CLI}}
-    A -->|edits| W[(Isolated<br/>git worktree)]
-    W --> V[Validation engine<br/>lint · types · tests · review]
-    V -->|PASS / WARNING| H{{⏸ Waiting for approval}}
-    V -->|FAIL| F[❌ Failed]
-    H -->|tasks approve| M[✅ Merged into your branch]
-    H -->|tasks reject| C[Branch kept, not merged]
+    O([objective]) --> P[PLAN<br/>task graph]
+    P --> R[ROUTE<br/>capability match]
+    R --> I[ISOLATE<br/>worktree per task]
+    I --> V[VERIFY<br/>lint · types · tests · review]
+    V -->|pass| A{{YOU APPROVE}}
+    V -->|fail| F[stopped]
+    A -->|approve| M[MERGE]
+    A -->|reject| K[branch kept]
+    classDef signal fill:#FFB000,stroke:#FFB000,color:#0B1220,font-weight:bold
+    classDef go fill:#3DDC97,stroke:#3DDC97,color:#0B1220
+    classDef stop fill:#2A1620,stroke:#E5484D,color:#FFB4B8
+    class A signal
+    class M go
+    class F stop
 ```
 
-Every task follows an explicit state machine; invalid transitions are rejected and
-every change is recorded:
+| Station | What happens |
+|---|---|
+| **Plan** | The objective becomes a dependency graph (single, standard, or an agent-written JSON plan). |
+| **Route** | Each task goes to a provider that *declares* the capability it needs: mock, Claude Code, Google Antigravity (manual handoff) or any CLI agent. |
+| **Isolate** | One git worktree and branch per task. Overlapping edits and merge conflicts are detected before they hurt. |
+| **Verify** | Diff, scope, Ruff, Mypy, Pytest and a heuristic review, optionally in a no-network Docker sandbox. |
+| **You approve** | `tasks approve` / `tasks reject`, from the CLI or the dashboard. |
+| **Merge** | Only into a clean checkout on the right branch, after a conflict-free dry run. |
+
+<details>
+<summary><b>State machine</b></summary>
 
 ```mermaid
+%%{init: {'theme':'base','themeVariables':{'primaryColor':'#0B1220','primaryTextColor':'#E8EDF7','primaryBorderColor':'#5E6E8C','lineColor':'#8A94A6'}}}%%
 stateDiagram-v2
     direction LR
     [*] --> PENDING
@@ -185,120 +195,113 @@ stateDiagram-v2
     SUCCEEDED --> [*]
 ```
 
+Invalid transitions are rejected in code, and every change is stored as an event.
+
+</details>
+
+<a id="dashboard"></a>
+
+## Dashboard
+
+```bash
+agentbridge dashboard            # http://127.0.0.1:8765/
+```
+
+A local control room with live updates: task counts and the approval queue, run plans
+and dependency graphs, coloured diffs, failing validation output, tokens and estimated
+cost, and **Approve / Reject / Cancel** behind a confirmation. Localhost only; every
+action needs a per-session token. [More](docs/dashboard.md).
+
+<a id="bench"></a>
+
+## AgentBench
+
+> *Does multi-agent collaboration improve software-engineering task completion
+> compared with a single agent, and when?*
+
+12 deterministic tasks across 8 categories: bug fixing, features, refactoring, test
+generation, docs, code review, dependency updates and repository analysis. Acceptance
+tests stay **hidden** from the agent until it has finished.
+
+```bash
+agentbridge benchmark run smoke -c mock-oracle -c mock-noop     # free harness check
+agentbridge benchmark run core  -c claude-single -c claude-multi -n 3
+```
+
+| Harness control | Runs | Success |
+|---|---:|---:|
+| `mock-oracle` writes the reference solution | 12 | **100 %** |
+| `mock-noop` changes nothing useful | 12 | **0 %** |
+| `antigravity-remote` manual handoff | 0 of 12 executable | n/a |
+
+| Pilot · `bugfix-002` · n = 1 | Hidden tests | Time | Est. cost |
+|---|---:|---:|---:|
+| `claude-single` | 5/5 | 14.9 s | $0.37 |
+| `claude-multi` analyst → developer → reviewer | 5/5 | 74.7 s | $0.75 |
+
+> [!WARNING]
+> One easy task, one repetition. **This is not a result.** Please don't cite single-
+> vs multi-agent conclusions from this repository yet.
+> [Methodology](docs/benchmark-methodology.md).
+
+## Status
+
+**Working** · CLI · SQLite state machine · mock and Claude Code adapters · worktree
+isolation · validation engine · approval-gated merge · retries and recovery · Alembic
+migrations · Docker validation sandbox · dashboard · AgentBench · 176 tests
+
+**Partial** · Antigravity (manual handoff) · generic CLI adapter (user-declared
+capabilities) · Claude in a container (unit-tested, not yet run end-to-end)
+
+**Planned** · dedicated Codex / OpenCode adapters. See the [roadmap](docs/roadmap.md).
+
+> [!CAUTION]
+> A worktree isolates **changes**, not **processes**: on the host, agents run with your
+> user's permissions. Use container mode or a VM for untrusted repositories.
+> [Security model](docs/security.md).
+
+<a id="docs"></a>
+
+## Docs
+
+| Start | Understand | Configure |
+|---|---|---|
+| [Installation](docs/installation.md) | [Architecture](docs/architecture.md) | [Configuration](docs/configuration.md) |
+| [Examples](examples/) | [Task lifecycle](docs/task-lifecycle.md) | [Providers](docs/providers.md) |
+| [Troubleshooting](docs/troubleshooting.md) | [Security model](docs/security.md) | [Capability matrix](docs/provider-capabilities.md) |
+| [Dashboard](docs/dashboard.md) | [Benchmark method](docs/benchmark-methodology.md) | [Roadmap](docs/roadmap.md) |
+
 <details>
 <summary><b>Repository layout</b></summary>
 
 ```text
 src/agentbridge/
-├── cli/          Typer commands, Rich output, exit codes
-├── config/       validated agentbridge.yaml models
+├── cli/          commands, output, exit codes
+├── config/       validated agentbridge.yaml
 ├── core/         orchestrator, planner, router, events
-├── agents/       adapter contract + mock, claude, antigravity, generic_cli
-├── tasks/        task models, state machine, dependencies, recovery
-├── storage/      SQLAlchemy models and data access (SQLite, WAL)
-├── workspace/    git worktrees, diffs, conflicts, approval-gated merge
-├── validation/   test / lint / type-check runners, diff review
-├── security/     policies, command permissions, secret redaction, paths
-├── reporting/    task and run reports
+├── agents/       adapter contract: mock, claude, antigravity, generic_cli
+├── tasks/        models, state machine, dependencies, recovery
+├── storage/      SQLite (WAL) + Alembic migrations
+├── workspace/    worktrees, diffs, conflicts, approval-gated merge
+├── validation/   test / lint / type runners, diff review, sandbox
+├── security/     policies, command allowlist, secret redaction
 ├── dashboard/    FastAPI server + prebuilt React UI
 └── bench/        AgentBench runner, metrics, reports
-benchmarks/       AgentBench tasks, configurations, published reports
-dashboard/        React + TypeScript source of the web UI
-docs/             full documentation
+benchmarks/       tasks, configurations, published reports
+dashboard/        React + TypeScript source
 ```
 
 </details>
 
-## 🖥️ Dashboard
+**Contributing:** `make check` runs Ruff, Mypy (strict) and Pytest. Read
+[CONTRIBUTING.md](CONTRIBUTING.md) and the [Code of Conduct](CODE_OF_CONDUCT.md);
+report vulnerabilities privately via [SECURITY.md](SECURITY.md). Licensed under
+[MIT](LICENSE).
 
-```bash
-agentbridge dashboard        # opens http://127.0.0.1:8765/
-```
+<br>
 
-- **Overview** — task counts, approval banner, recent runs, live activity feed, providers
-- **Runs** — objective, plan warnings, task dependency graph
-- **Tasks** — coloured diff, validation steps with failing output, agent output,
-  timeline, tokens & cost, and **Approve / Reject / Cancel** with confirmation
-- **AgentBench** — success-rate bars and full metric tables
-
-The server listens on localhost only and actions require a per-session token.
-See [docs/dashboard.md](docs/dashboard.md).
-
-## 📊 AgentBench
-
-> *Does multi-agent collaboration improve software-engineering task completion
-> compared with individual agents — and when?*
-
-12 deterministic tasks covering bug fixing, features, refactoring, test generation,
-documentation, code review, dependency updates and repository analysis. Acceptance
-tests stay **hidden** from the agent until it has finished.
-
-```bash
-agentbridge benchmark list
-agentbridge benchmark run smoke -c mock-oracle -c mock-noop     # free harness check
-agentbridge benchmark run core  -c claude-single -c claude-multi -n 3
-```
-
-| Harness control (real run) | Runs | Task success |
-|---|---:|---:|
-| `mock-oracle` — writes the reference solution | 12 | **100 %** |
-| `mock-noop` — changes nothing useful | 12 | **0 %** |
-| `antigravity-remote` — manual handoff | 0 (12 not executable) | n/a |
-
-First real-agent **pilot** (1 easy task, 1 repetition — not a conclusion):
-
-| Pilot: `bugfix-002` | Hidden tests | Time | Est. cost |
-|---|---:|---:|---:|
-| `claude-single` | 5/5 | 14.9 s | $0.37 |
-| `claude-multi` (analyst → developer → reviewer + review) | 5/5 | 74.7 s | $0.75 |
-
-> [!IMPORTANT]
-> The controls only prove the harness works, and the pilot is a single run of one easy
-> task. **No statistically meaningful comparison exists yet** — please don't cite
-> multi- vs single-agent conclusions from this repository. Method: [docs/benchmark-methodology.md](docs/benchmark-methodology.md).
-
-## 🔐 Security at a glance
-
-- Agent output, plans and repository content are **never executed**.
-- Only configured commands run, without a shell, through a per-policy allowlist
-  (`safe` / `standard` / `trusted`).
-- Force-push, hard reset, `git clean` and branch deletion are refused in code.
-- Secrets are redacted from logs, reports, stored diffs and the database.
-- Merges require a clean checkout, the right branch and a conflict-free dry run.
-
-> [!WARNING]
-> A git worktree isolates **changes**, not **processes**: agents run with your user's
-> permissions. `validation.sandbox: docker` containerises the checks AgentBridge runs
-> on agent-written code, but not the agent itself — use a VM for untrusted repositories. Details in
-> [docs/security.md](docs/security.md).
-
-## 📚 Documentation
-
-| Getting started | Concepts | Reference |
-|---|---|---|
-| [Installation](docs/installation.md) | [Architecture](docs/architecture.md) | [Configuration](docs/configuration.md) |
-| [Examples](examples/) | [Task lifecycle](docs/task-lifecycle.md) | [Providers](docs/providers.md) |
-| [Troubleshooting](docs/troubleshooting.md) | [Security model](docs/security.md) | [Capability matrix](docs/provider-capabilities.md) |
-| [Dashboard](docs/dashboard.md) | [Benchmark methodology](docs/benchmark-methodology.md) | [Roadmap](docs/roadmap.md) |
-
-## 🛠️ Development
-
-```bash
-make check         # ruff + format check + mypy (strict) + pytest
-make test          # tests only
-make bench-smoke   # AgentBench harness controls
-```
-
-Contributions are welcome — please read [CONTRIBUTING.md](CONTRIBUTING.md) and the
-[Code of Conduct](CODE_OF_CONDUCT.md). Report vulnerabilities privately as described
-in [SECURITY.md](SECURITY.md).
-
-## 📄 License
-
-[MIT](LICENSE). Runtime dependencies (Typer, Rich, Pydantic, SQLAlchemy, PyYAML,
-FastAPI, Uvicorn, React) are MIT- or BSD-licensed.
-
-<div align="center">
-<sub>Don't just connect AI agents. Make them cooperate, verify their work, and measure
-whether the collaboration actually improves software engineering.</sub>
-</div>
+<p align="center">
+  <img src="assets/brand/mark.svg" alt="" width="44"><br>
+  <sub><b>AGENTBRIDGE</b> &nbsp;·&nbsp; built by <a href="https://github.com/yoonjae26">yoonjae26</a></sub><br>
+  <sub>Agents propose. You approve.</sub>
+</p>
