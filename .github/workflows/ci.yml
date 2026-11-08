@@ -16,9 +16,9 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
-      - run: python -m pip install -e ".[dev]"
-      - run: ruff check src tests
-      - run: ruff format --check src tests
+      - run: python -m pip install -e ".[dev]" -e packages/agentbridge-bench
+      - run: ruff check src packages tests
+      - run: ruff format --check src packages tests
       - run: mypy
 
   bench-controls:
@@ -28,6 +28,6 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
-      - run: python -m pip install -e ".[dev]"
+      - run: python -m pip install -e ".[dev]" -e packages/agentbridge-bench
       - name: AgentBench harness controls (no paid APIs)
-        run: agentbridge benchmark run smoke -c mock-oracle -c mock-noop --output /tmp/agentbench
+        run: agentbridge-bench run smoke -c mock-oracle -c mock-noop --output /tmp/agentbench

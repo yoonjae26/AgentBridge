@@ -70,8 +70,16 @@ git clone https://github.com/yoonjae26/AgentBridge.git
 cd AgentBridge
 python -m venv .venv
 source .venv/bin/activate        # Windows: .venv\Scripts\activate
-pip install -e ".[dev]"
+pip install -e .                                 # agentbridge-core
+pip install -e packages/agentbridge-bench        # optional: AgentBench
 ```
+
+AgentBridge ships as two packages (not on PyPI yet, so install from source for now):
+
+| Package | Command | What it is |
+|---|---|---|
+| **`agentbridge-core`** | `agentbridge` | The orchestrator you use day to day. |
+| **`agentbridge-bench`** | `agentbridge-bench` | AgentBench, the evaluation harness. Installs `agentbridge-core` too. |
 
 Then, inside **any** git repository with at least one commit:
 
@@ -221,11 +229,13 @@ action needs a per-session token. [More](docs/dashboard.md).
 
 12 deterministic tasks across 8 categories: bug fixing, features, refactoring, test
 generation, docs, code review, dependency updates and repository analysis. Acceptance
-tests stay **hidden** from the agent until it has finished.
+tests stay **hidden** from the agent until it has finished. Published as the
+[`agentbridge-bench`](packages/agentbridge-bench) package; `agentbridge benchmark …` runs
+the same commands once it is installed.
 
 ```bash
-agentbridge benchmark run smoke -c mock-oracle -c mock-noop     # free harness check
-agentbridge benchmark run core  -c claude-single -c claude-multi -n 3
+agentbridge-bench run smoke -c mock-oracle -c mock-noop     # free harness check
+agentbridge-bench run core  -c claude-single -c claude-multi -n 3
 ```
 
 | Harness control | Runs | Success |
@@ -248,7 +258,7 @@ agentbridge benchmark run core  -c claude-single -c claude-multi -n 3
 
 **Working** · CLI · SQLite state machine · mock and Claude Code adapters · worktree
 isolation · validation engine · approval-gated merge · retries and recovery · Alembic
-migrations · Docker validation sandbox · dashboard · AgentBench · 176 tests
+migrations · Docker validation sandbox · dashboard · AgentBench · 178 tests
 
 **Partial** · Antigravity (manual handoff) · generic CLI adapter (user-declared
 capabilities) · Claude in a container (unit-tested, not yet run end-to-end)
@@ -285,15 +295,16 @@ src/agentbridge/
 ├── workspace/    worktrees, diffs, conflicts, approval-gated merge
 ├── validation/   test / lint / type runners, diff review, sandbox
 ├── security/     policies, command allowlist, secret redaction
-├── dashboard/    FastAPI server + prebuilt React UI
-└── bench/        AgentBench runner, metrics, reports
+└── dashboard/    FastAPI server + prebuilt React UI
+packages/agentbridge-bench/
+                  AgentBench (agentbridge_bench): runner, metrics, reports, CLI
 benchmarks/       tasks, configurations, published reports
 dashboard/        React + TypeScript source
 ```
 
 </details>
 
-**Contributing:** `make check` runs Ruff, Mypy (strict) and Pytest. Read
+**Contributing:** `make install` sets up both packages; `make check` runs Ruff, Mypy (strict) and Pytest. Read
 [CONTRIBUTING.md](CONTRIBUTING.md) and the [Code of Conduct](CODE_OF_CONDUCT.md);
 report vulnerabilities privately via [SECURITY.md](SECURITY.md). Licensed under
 [MIT](LICENSE).

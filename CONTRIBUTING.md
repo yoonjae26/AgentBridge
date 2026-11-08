@@ -7,7 +7,7 @@ feature count: a small, well-tested change is better than a large incomplete one
 
 ```bash
 python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
-pip install -e ".[dev]"
+pip install -e ".[dev]" -e packages/agentbridge-bench
 make check
 ```
 

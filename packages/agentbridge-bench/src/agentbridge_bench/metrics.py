@@ -11,7 +11,7 @@ from collections import defaultdict
 from collections.abc import Iterable, Sequence
 from typing import Any
 
-from agentbridge.bench.models import ExperimentRecord
+from agentbridge_bench.models import ExperimentRecord
 
 
 def _rate(flags: Sequence[bool | None]) -> float | None:

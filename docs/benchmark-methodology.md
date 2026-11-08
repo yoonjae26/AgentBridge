@@ -115,7 +115,7 @@ Unknown values are `null` (shown as `n/a`), never zero.
 `benchmarks/experiments/<experiment_id>/`: `metadata.json`, `records/*.json`,
 `records.csv`, `summary.csv`, `summary.json`, `report.md`, `success_rate.svg`,
 `execution_time.svg`, and `work/` (all workspaces, for inspection).
-`agentbridge benchmark report <dir>` regenerates every derived file from `records/`.
+`agentbridge-bench report <dir>` regenerates every derived file from `records/`.
 
 ## Results
 

@@ -14,14 +14,14 @@ git clone https://github.com/yoonjae26/AgentBridge.git
 cd AgentBridge
 python -m venv .venv
 source .venv/bin/activate          # Windows: .venv\Scripts\activate
-pip install -e ".[dev]"
+pip install -e ".[dev]" -e packages/agentbridge-bench
 agentbridge --version
 ```
 
 With uv:
 
 ```bash
-uv venv && uv pip install -e ".[dev]"
+uv venv && uv pip install -e ".[dev]" -e packages/agentbridge-bench
 ```
 
 Tip for machines with a small system drive: keep the virtual environment and caches

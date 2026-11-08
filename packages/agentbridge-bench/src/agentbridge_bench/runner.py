@@ -13,6 +13,7 @@ For each (task, configuration, repetition):
 from __future__ import annotations
 
 import asyncio
+import importlib.util
 import json
 import platform
 import re
@@ -28,15 +29,6 @@ from typing import Any
 from agentbridge import __version__
 from agentbridge.agents.capabilities import Capability
 from agentbridge.agents.registry import AgentRegistry
-from agentbridge.bench.dataset import (
-    copy_tree,
-    fixture_digest,
-    materialize_fixture,
-    read_overlay,
-    task_dir,
-)
-from agentbridge.bench.models import BenchConfiguration, BenchmarkTask, ExperimentRecord
-from agentbridge.bench.reports import generate_reports
 from agentbridge.config.loader import ProjectPaths
 from agentbridge.config.settings import (
     OrchestrationSettings,
@@ -55,6 +47,15 @@ from agentbridge.storage.repositories import Store
 from agentbridge.tasks.models import TaskStatus
 from agentbridge.validation.runners import expand
 from agentbridge.workspace.conflicts import check_merge
+from agentbridge_bench.dataset import (
+    copy_tree,
+    fixture_digest,
+    materialize_fixture,
+    read_overlay,
+    task_dir,
+)
+from agentbridge_bench.models import BenchConfiguration, BenchmarkTask, ExperimentRecord
+from agentbridge_bench.reports import generate_reports
 
 ProgressFn = Callable[[str], None]
 _RESULT_LINE = re.compile(r"^(PASSED|FAILED|ERROR|XPASS|XFAIL|SKIPPED)\s+(\S+)", re.MULTILINE)
@@ -97,9 +98,19 @@ async def _run_pytest(
         for number, label in _COUNTS.findall(summary[-1]):
             key = "passed" if label == "passed" else "failed"
             counts[key] += int(number)
-    if result.timed_out or result.error:
+    if result.timed_out or result.error or (not summary and result.exit_code not in (0, None)):
+        # No pytest summary from a failing run (crash, missing pytest...): never report 0/0.
         counts["failed"] = max(counts["failed"], 1)
     return outcomes, counts, output
+
+
+def ensure_pytest_available() -> None:
+    """Hidden acceptance tests need pytest in the interpreter running AgentBench."""
+    if importlib.util.find_spec("pytest") is None:
+        raise AgentBridgeError(
+            "AgentBench needs pytest to run the hidden acceptance tests. "
+            "Install it with: pip install pytest"
+        )
 
 
 def _settings_for(config: BenchConfiguration, task: BenchmarkTask) -> Settings:
@@ -159,6 +170,7 @@ class BenchmarkRunner:
         repetitions: int = 1,
         experiment_id: str | None = None,
     ) -> Path:
+        ensure_pytest_available()
         experiment_id = experiment_id or (
             datetime.now(UTC).strftime("exp-%Y%m%d-%H%M%S-") + secrets.token_hex(2)
         )

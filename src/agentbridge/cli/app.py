@@ -7,7 +7,6 @@ from typing import Annotated
 import typer
 
 from agentbridge import __version__
-from agentbridge.cli.commands.bench import bench_app
 from agentbridge.cli.commands.dashboard import dashboard_command
 from agentbridge.cli.commands.project import init_command, providers_app
 from agentbridge.cli.commands.remote import remote_app
@@ -46,4 +45,23 @@ app.command("dashboard")(dashboard_command)
 app.add_typer(providers_app, name="providers")
 app.add_typer(tasks_app, name="tasks")
 app.add_typer(remote_app, name="remote")
-app.add_typer(bench_app, name="benchmark")
+
+
+def _benchmark_unavailable() -> None:
+    """AgentBench is not installed: pip install agentbridge-bench."""
+    typer.echo(
+        "AgentBench is a separate package. Install it with: pip install agentbridge-bench",
+        err=True,
+    )
+    raise typer.Exit(code=2)
+
+
+try:
+    from agentbridge_bench.cli import bench_app
+except ImportError:  # optional package
+    app.command(
+        "benchmark",
+        context_settings={"allow_extra_args": True, "ignore_unknown_options": True},
+    )(_benchmark_unavailable)
+else:
+    app.add_typer(bench_app, name="benchmark")

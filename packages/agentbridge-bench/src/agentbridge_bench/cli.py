@@ -1,4 +1,4 @@
-"""`agentbridge benchmark ...` (AgentBench)."""
+"""AgentBench command line: ``agentbridge-bench ...`` and ``agentbridge benchmark ...``."""
 
 from __future__ import annotations
 
@@ -9,17 +9,17 @@ import typer
 from rich.markup import escape
 from rich.table import Table
 
-from agentbridge.bench.dataset import (
+from agentbridge.cli.context import handle_errors
+from agentbridge.cli.output import console
+from agentbridge.errors import ConfigError, NotFoundError
+from agentbridge_bench.dataset import (
     default_benchmarks_dir,
     load_configurations,
     load_suites,
     load_tasks,
 )
-from agentbridge.bench.reports import generate_reports
-from agentbridge.bench.runner import run_benchmark
-from agentbridge.cli.context import handle_errors
-from agentbridge.cli.output import console
-from agentbridge.errors import ConfigError, NotFoundError
+from agentbridge_bench.reports import generate_reports
+from agentbridge_bench.runner import run_benchmark
 
 bench_app = typer.Typer(help="AgentBench: reproducible agent evaluation.", no_args_is_help=True)
 
@@ -107,3 +107,12 @@ def bench_report(
             f"{name}: success={metrics['task_success_rate']} executed={metrics['runs_executed']}"
         )
     console.print(f"Report: {experiment_dir / 'report.md'}")
+
+
+def main() -> None:
+    """Entry point of the ``agentbridge-bench`` command."""
+    bench_app(prog_name="agentbridge-bench")
+
+
+if __name__ == "__main__":
+    main()

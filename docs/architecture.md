@@ -31,7 +31,7 @@ or external database: one CLI process orchestrates work and persists state in SQ
                              |                              workspace/integration.py
                        REPORTS (JSON + Markdown)               reporting/
                              |
-                         AGENTBENCH                            bench/ + benchmarks/
+                         AGENTBENCH                            agentbridge_bench + benchmarks/
 ```
 
 ## Modules
@@ -50,7 +50,7 @@ or external database: one CLI process orchestrates work and persists state in SQ
 | `validation/` | Command runners (policy-checked), deterministic diff review, aggregation into PASS/FAIL/WARNING/NEEDS_HUMAN_REVIEW. |
 | `security/` | Policy profiles, command permission checks, secret redaction, path validation. |
 | `reporting/` | Task and run reports. |
-| `bench/` | AgentBench schemas, dataset loading, runner, metrics, reports. |
+| `agentbridge_bench` (package `agentbridge-bench`) | AgentBench schemas, dataset loading, runner, metrics, reports and the `agentbridge-bench` CLI. Depends on `agentbridge-core`; the core never requires it. |
 
 ## Key design decisions
 

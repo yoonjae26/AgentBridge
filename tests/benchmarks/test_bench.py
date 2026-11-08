@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from agentbridge.bench.dataset import (
+from agentbridge_bench.dataset import (
     fixture_digest,
     load_configurations,
     load_suites,
@@ -12,9 +12,9 @@ from agentbridge.bench.dataset import (
     materialize_fixture,
     task_dir,
 )
-from agentbridge.bench.models import TaskCategory
-from agentbridge.bench.reports import generate_reports
-from agentbridge.bench.runner import BenchmarkRunner
+from agentbridge_bench.models import TaskCategory
+from agentbridge_bench.reports import generate_reports
+from agentbridge_bench.runner import BenchmarkRunner
 
 BENCH = Path(__file__).resolve().parents[2] / "benchmarks"
 
@@ -87,3 +87,28 @@ def test_controls_and_reproducible_reports(tmp_path: Path):
         assert (exp_dir / name).exists(), name
     # Reports are reproducible from saved records alone.
     assert generate_reports(exp_dir) == summary
+
+
+def test_missing_pytest_is_an_error_not_zero_tests(monkeypatch):
+    import importlib.util
+
+    import pytest
+
+    from agentbridge.errors import AgentBridgeError
+    from agentbridge_bench import runner
+
+    monkeypatch.setattr(importlib.util, "find_spec", lambda name: None)
+    with pytest.raises(AgentBridgeError, match="pytest"):
+        runner.ensure_pytest_available()
+
+
+def test_failing_run_without_summary_counts_as_failure(tmp_path):
+    import asyncio
+    import sys
+
+    from agentbridge_bench.runner import _run_pytest
+
+    _, counts, _ = asyncio.run(
+        _run_pytest([sys.executable, "-m", "pytest", "--no-such-option"], tmp_path, 60)
+    )
+    assert counts["failed"] >= 1

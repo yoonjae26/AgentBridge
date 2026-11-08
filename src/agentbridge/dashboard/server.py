@@ -27,7 +27,6 @@ from sqlalchemy import func, select
 
 from agentbridge import __version__
 from agentbridge.agents.registry import AgentRegistry
-from agentbridge.bench.dataset import default_benchmarks_dir
 from agentbridge.config.loader import ProjectPaths
 from agentbridge.config.settings import Settings
 from agentbridge.core.orchestrator import Orchestrator
@@ -66,6 +65,14 @@ def _error(exc: AgentBridgeError) -> HTTPException:
     return HTTPException(status_code=status, detail={"message": exc.message, "hint": exc.hint})
 
 
+def _default_benchmarks_dir() -> Path:
+    try:
+        from agentbridge_bench.dataset import default_benchmarks_dir
+    except ImportError:  # agentbridge-bench not installed
+        return Path.cwd() / "benchmarks"
+    return default_benchmarks_dir()
+
+
 def create_app(
     paths: ProjectPaths,
     settings: Settings,
@@ -74,7 +81,7 @@ def create_app(
     benchmarks_dir: Path | None = None,
 ) -> FastAPI:
     state = DashboardState(paths, settings, token or secrets.token_urlsafe(24))
-    bench_root = benchmarks_dir or default_benchmarks_dir()
+    bench_root = benchmarks_dir or _default_benchmarks_dir()
     app = FastAPI(title="AgentBridge Dashboard", version=__version__, docs_url=None,
                   redoc_url=None, openapi_url=None)
     app.state.dashboard = state

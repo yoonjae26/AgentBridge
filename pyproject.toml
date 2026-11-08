@@ -3,13 +3,13 @@ requires = ["hatchling>=1.24"]
 build-backend = "hatchling.build"
 
 [project]
-name = "agentbridge"
+name = "agentbridge-core"
 version = "0.1.0"
-description = "Provider-agnostic orchestration framework for AI coding agents, with the AgentBench evaluation harness."
+description = "AgentBridge: provider-agnostic orchestration for AI coding agents (plan, isolate, verify, approve)."
 readme = "README.md"
 requires-python = ">=3.12"
 license = { text = "MIT" }
-authors = [{ name = "AgentBridge contributors" }]
+authors = [{ name = "yoonjae26" }]
 keywords = ["ai", "agents", "orchestration", "claude-code", "benchmark", "developer-tools"]
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -68,7 +68,7 @@ markers = [
 [tool.ruff]
 line-length = 100
 target-version = "py312"
-src = ["src", "tests"]
+src = ["src", "packages/agentbridge-bench/src", "tests"]
 extend-exclude = ["benchmarks/tasks", "dashboard"]
 
 [tool.ruff.lint]
@@ -89,8 +89,8 @@ python_version = "3.12"
 strict = true
 warn_unused_ignores = true
 plugins = ["pydantic.mypy"]
-packages = ["agentbridge"]
-mypy_path = "src"
+packages = ["agentbridge", "agentbridge_bench"]
+mypy_path = "src:packages/agentbridge-bench/src"
 
 [[tool.mypy.overrides]]
 module = ["agentbridge.storage.migrations.*"]

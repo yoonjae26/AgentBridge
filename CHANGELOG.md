@@ -6,6 +6,21 @@ All notable changes are documented here. The format follows
 
 ## Unreleased
 
+### Changed
+
+- Split into two distributions: **`agentbridge-core`** (the `agentbridge` command;
+  import name unchanged) and **`agentbridge-bench`** (AgentBench, import
+  `agentbridge_bench`, command `agentbridge-bench`). The PyPI name `agentbridge` belongs
+  to an unrelated project. `agentbridge benchmark …` still works when
+  `agentbridge-bench` is installed and prints an install hint otherwise.
+- The `agentbridge-bench` wheel bundles the benchmark suite and works outside a source
+  checkout.
+
+### Fixed
+
+- AgentBench refuses to run without pytest, and a test command that fails without a
+  pytest summary now counts as a failure instead of silently reporting 0/0.
+
 ### Added
 
 - Local web dashboard: `agentbridge dashboard` (FastAPI backend, React + TypeScript

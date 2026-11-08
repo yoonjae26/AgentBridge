@@ -10,9 +10,9 @@ from pathlib import Path
 import yaml
 from pydantic import ValidationError
 
-from agentbridge.bench.models import BenchConfiguration, BenchmarkTask
 from agentbridge.errors import ConfigError, NotFoundError
 from agentbridge.workspace.git import Git
+from agentbridge_bench.models import BenchConfiguration, BenchmarkTask
 
 FIXED_DATE = "2025-01-01T00:00:00+00:00"
 
@@ -24,8 +24,12 @@ def default_benchmarks_dir() -> Path:
     cwd_candidate = Path.cwd() / "benchmarks"
     if (cwd_candidate / "tasks").is_dir():
         return cwd_candidate
-    # Source checkout: <repo>/src/agentbridge/bench/dataset.py -> <repo>/benchmarks
-    return Path(__file__).resolve().parents[3] / "benchmarks"
+    # Source checkout: <repo>/packages/agentbridge-bench/src/agentbridge_bench/dataset.py
+    checkout = Path(__file__).resolve().parents[4] / "benchmarks"
+    if (checkout / "tasks").is_dir():
+        return checkout
+    # Installed wheel: the task suite ships inside the package.
+    return Path(__file__).resolve().parent / "data"
 
 
 def _read_yaml(path: Path) -> object:

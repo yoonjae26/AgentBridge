@@ -1,5 +1,5 @@
-from agentbridge.bench.metrics import summarize, summarize_by_configuration
-from agentbridge.bench.models import ExperimentRecord
+from agentbridge_bench.metrics import summarize, summarize_by_configuration
+from agentbridge_bench.models import ExperimentRecord
 
 
 def record(**kw):
