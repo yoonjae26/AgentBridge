@@ -69,18 +69,62 @@ agentbridge report <task_id>                                           # what ch
 agentbridge tasks approve <task_id>                                    # merge — only when you decide
 ```
 
-<details>
-<summary><b>Using Claude Code instead of the mock provider</b></summary>
+### 🔑 Use your own Claude account
 
-1. Install [Claude Code](https://docs.anthropic.com/en/docs/claude-code) and log in once (`claude`).
+> [!IMPORTANT]
+> This repository contains **no accounts, tokens or API keys**. Everyone runs AgentBridge
+> with **their own** Claude subscription (Pro/Max) or their own Anthropic API key, and
+> usage is billed to that account. Never commit credentials: `agentbridge.yaml`, `.env`
+> and `.agentbridge/` are git-ignored on purpose.
+
+**Option A: run on your machine (simplest)**
+
+1. Install [Claude Code](https://docs.anthropic.com/en/docs/claude-code) and log in once
+   with your own account: run `claude`, then `/login`. If you use the API instead, set
+   `ANTHROPIC_API_KEY` in your environment.
 2. `agentbridge providers check` should report `claude … available`.
 3. Run with `--provider claude`, or set `routing.default_worker: claude` in `agentbridge.yaml`.
 
 AgentBridge calls `claude -p --output-format json --permission-mode acceptEdits` inside
 the task worktree, sends the prompt on stdin and records tokens and the CLI's
-*estimated* cost.
+*estimated* cost. AgentBridge never reads or stores your credentials; it only checks that
+they exist.
 
-</details>
+**Option B: run Claude in an isolated container (recommended for untrusted tasks)**
+
+The container sees only the task worktree. Your `~/.claude` folder (login and history),
+your home directory and your other environment variables are never mounted.
+
+1. Build the image (needs Docker; on Windows, Docker in WSL works):
+   ```bash
+   docker build -t agentbridge-claude:latest -f examples/container/Dockerfile.claude examples/container
+   ```
+2. Create a token for **your** account: `claude setup-token`. The token lets the
+   holder use your Claude quota, so treat it like a password.
+3. Put the token only in the current shell session, so it is gone when you close the
+   window:
+   ```powershell
+   # PowerShell
+   $env:CLAUDE_CODE_OAUTH_TOKEN = Read-Host -MaskInput "Claude token"
+   ```
+   ```bash
+   # bash / zsh
+   read -rs CLAUDE_CODE_OAUTH_TOKEN && export CLAUDE_CODE_OAUTH_TOKEN
+   ```
+4. Enable container mode in your local `agentbridge.yaml`. Don't write the token in it:
+   ```yaml
+   providers:
+     claude:
+       container:
+         enabled: true
+         command: [docker]          # Windows + WSL: [wsl, docker]
+         token_env: CLAUDE_CODE_OAUTH_TOKEN   # or ANTHROPIC_API_KEY
+   ```
+
+If Docker or the token is missing, AgentBridge refuses to run. It never falls back to
+the host. If a token may have leaked, revoke it from your Claude account and create a
+new one. See [docs/security.md](docs/security.md#running-claude-code-in-a-container)
+for the full privacy model.
 
 ## 🧩 Features
 
