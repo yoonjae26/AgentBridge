@@ -279,7 +279,7 @@ capabilities) · Claude in a container (unit-tested, not yet run end-to-end)
 | [Installation](docs/installation.md) | [Architecture](docs/architecture.md) | [Configuration](docs/configuration.md) |
 | [Examples](examples/) | [Task lifecycle](docs/task-lifecycle.md) | [Providers](docs/providers.md) |
 | [Troubleshooting](docs/troubleshooting.md) | [Security model](docs/security.md) | [Capability matrix](docs/provider-capabilities.md) |
-| [Dashboard](docs/dashboard.md) | [Benchmark method](docs/benchmark-methodology.md) | [Roadmap](docs/roadmap.md) |
+| [Dashboard](docs/dashboard.md) | [Benchmark method](docs/benchmark-methodology.md) | [Roadmap](docs/roadmap.md) · [Releasing](docs/releasing.md) |
 
 <details>
 <summary><b>Repository layout</b></summary>

@@ -13,6 +13,8 @@ All notable changes are documented here. The format follows
   `agentbridge_bench`, command `agentbridge-bench`). The PyPI name `agentbridge` belongs
   to an unrelated project. `agentbridge benchmark …` still works when
   `agentbridge-bench` is installed and prints an install hint otherwise.
+- Release workflow publishes both packages to PyPI with trusted publishing (no stored
+  tokens) after a tag/version check; see docs/releasing.md.
 - The `agentbridge-bench` wheel bundles the benchmark suite and works outside a source
   checkout.
 
