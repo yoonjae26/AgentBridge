@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "agentbridge-bench"
-version = "0.1.0"
+version = "0.1.1"
 description = "AgentBench: reproducible evaluation of single- and multi-agent AI coding setups, built on AgentBridge."
 readme = "README.md"
 requires-python = ">=3.12"
@@ -21,7 +21,7 @@ classifiers = [
     "Topic :: Software Development :: Testing",
 ]
 dependencies = [
-    "agentbridge-core>=0.1.0,<0.2",
+    "agentbridge-core>=0.1.1,<0.2",
     "typer>=0.12,<1.0",
     "rich>=13.7,<15",
     "pydantic>=2.7,<3",

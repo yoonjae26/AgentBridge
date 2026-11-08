@@ -6,6 +6,10 @@ All notable changes are documented here. The format follows
 
 ## Unreleased
 
+_Nothing yet._
+
+## 0.1.1 - 2026-11-08
+
 ### Added
 
 - `skills/agentbridge`: a free Agent Skill that drives the AgentBridge CLI from Claude
