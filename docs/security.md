@@ -66,10 +66,12 @@ providers:
 ```
 
 1. Build the image: `docker build -t agentbridge-claude:latest -f examples/container/Dockerfile.claude examples/container`.
-2. Run `claude setup-token` once and store the token in your **user** environment
-   variable `CLAUDE_CODE_OAUTH_TOKEN` (Windows: System Properties → Environment
-   Variables). Never put it in `agentbridge.yaml`, a `.env` committed to git, or a
-   command line.
+2. Run `claude setup-token` with **your own** account. Put the token in the
+   `CLAUDE_CODE_OAUTH_TOKEN` variable. Setting it only in the current shell session
+   (`$env:CLAUDE_CODE_OAUTH_TOKEN = Read-Host -MaskInput "Claude token"` in PowerShell)
+   is safer than a permanent user variable. Never put it in `agentbridge.yaml`, a `.env`
+   committed to git, or a command line. Anyone holding the token can spend your quota;
+   revoke it from your account if it may have leaked.
 
 What stays private:
 
