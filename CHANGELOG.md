@@ -6,6 +6,12 @@ All notable changes are documented here. The format follows
 
 ## Unreleased
 
+_Nothing yet._
+
+## 0.1.0 - 2026-11-08
+
+First release on PyPI.
+
 ### Changed
 
 - Split into two distributions: **`agentbridge-core`** (the `agentbridge` command;
@@ -43,9 +49,7 @@ All notable changes are documented here. The format follows
 - Execution records no longer stay `running` when an adapter raises.
 - Third-party test-client deprecation warning silenced.
 
-## 0.1.0 - 2026-11-08
-
-### Added
+### Added (foundations)
 
 - `agentbridge` CLI: `init`, `providers list|check`, `run`, `tasks
   list|status|inspect|resume|cancel|approve|reject|cleanup`, `logs`, `report`,

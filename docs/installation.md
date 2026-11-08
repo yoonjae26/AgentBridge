@@ -7,6 +7,15 @@
 - Optional: Claude Code CLI, logged in (`claude` on PATH)
 - Optional: Google Antigravity, for the manual remote handoff workflow
 
+## From PyPI
+
+```bash
+pip install agentbridge-core                 # the agentbridge command
+pip install "agentbridge-core[dashboard]"    # + local web dashboard
+pip install agentbridge-bench                # + AgentBench (agentbridge-bench command)
+agentbridge --version
+```
+
 ## From source
 
 ```bash

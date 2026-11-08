@@ -36,7 +36,7 @@ def dashboard_command(
     except ImportError as exc:
         raise ConfigError(
             "Dashboard dependencies are not installed",
-            hint='pip install "agentbridge[dashboard]"',
+            hint='pip install "agentbridge-core[dashboard]"',
         ) from exc
     paths, settings = load_project()
     paths.ensure()

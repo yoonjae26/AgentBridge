@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/brand/banner-dark.svg">
-    <img src="assets/brand/banner-light.svg" alt="AgentBridge: Agents propose. You approve." width="100%">
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/yoonjae26/AgentBridge/main/assets/brand/banner-dark.svg">
+    <img src="https://raw.githubusercontent.com/yoonjae26/AgentBridge/main/assets/brand/banner-light.svg" alt="AgentBridge: Agents propose. You approve." width="100%">
   </picture>
 </p>
 
@@ -66,20 +66,29 @@ agent?** [AgentBench](#bench) exists to measure it, not to assume it.
 ## Start in a minute
 
 ```bash
-git clone https://github.com/yoonjae26/AgentBridge.git
-cd AgentBridge
-python -m venv .venv
-source .venv/bin/activate        # Windows: .venv\Scripts\activate
-pip install -e .                                 # agentbridge-core
-pip install -e packages/agentbridge-bench        # optional: AgentBench
+pip install agentbridge-core       # the agentbridge command
+pip install agentbridge-bench      # optional: AgentBench (installs agentbridge-core too)
 ```
 
-AgentBridge ships as two packages (not on PyPI yet, so install from source for now):
+AgentBridge ships as two packages:
 
 | Package | Command | What it is |
 |---|---|---|
 | **`agentbridge-core`** | `agentbridge` | The orchestrator you use day to day. |
 | **`agentbridge-bench`** | `agentbridge-bench` | AgentBench, the evaluation harness. Installs `agentbridge-core` too. |
+
+<details>
+<summary>From source (for development)</summary>
+
+```bash
+git clone https://github.com/yoonjae26/AgentBridge.git
+cd AgentBridge
+python -m venv .venv
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
+pip install -e ".[dev]" -e packages/agentbridge-bench
+```
+
+</details>
 
 Then, inside **any** git repository with at least one commit:
 
@@ -212,7 +221,8 @@ Invalid transitions are rejected in code, and every change is stored as an event
 ## Dashboard
 
 ```bash
-agentbridge dashboard            # http://127.0.0.1:8765/
+pip install "agentbridge-core[dashboard]"   # FastAPI + Uvicorn
+agentbridge dashboard                       # http://127.0.0.1:8765/
 ```
 
 A local control room with live updates: task counts and the approval queue, run plans
@@ -312,7 +322,7 @@ report vulnerabilities privately via [SECURITY.md](SECURITY.md). Licensed under
 <br>
 
 <p align="center">
-  <img src="assets/brand/mark.svg" alt="" width="44"><br>
+  <img src="https://raw.githubusercontent.com/yoonjae26/AgentBridge/main/assets/brand/mark.svg" alt="" width="44"><br>
   <sub><b>AGENTBRIDGE</b> &nbsp;·&nbsp; built by <a href="https://github.com/yoonjae26">yoonjae26</a></sub><br>
   <sub>Agents propose. You approve.</sub>
 </p>
